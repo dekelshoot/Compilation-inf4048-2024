@@ -7,14 +7,14 @@ def save(aef, filename):
          @param aef le AEF à enregistrer
          @param filename le nom du fichier dans lequel
              l'automate sera sauvegardé."""
-    txt = "a = AEF.AEF(\"" + aef.alphabet + "\")\n"
+    txt = "a = AEF.AEF(\"" + str(aef.alphabet) + "\")\n"
     for etat in aef.etats:
         if etat in aef.finals:
             txt += "a.ajout_etat(\"" + etat + "\", True)\n"
         else:
             txt += "a.ajout_etat(\"" + etat + "\")\n"
 
-    txt += "\na.initial = \"" + aef.initial + "\"\n\n"
+    txt += "\na.initial = " + str(aef.initial)+ "\n\n"
 
     for etat in aef.etats:
         for (symbole, etat_dest) in aef.transitions[etat]:
@@ -47,7 +47,8 @@ def to_dot(aef, nom="Graph"):
     nom_etat = lambda s : "Q_" + str(aef.etats.index(s))
 
     # etats
-    affichage += "    node [shape = point ];     __Qi__ // Initial state\n" # Initial state
+    for etat in aef.initial:
+        affichage += "    node [shape = point ];     __Q"+etat+"__ // Initial state\n" # Initial state
     for etat in aef.etats:
         affichage += "    "
         if etat in aef.finals:
@@ -58,7 +59,8 @@ def to_dot(aef, nom="Graph"):
 
     # Transitions
     affichage += "\n    // Transitions\n"
-    affichage += "    __Qi__ -> " + nom_etat(aef.initial) + "; // Initial state arrow\n"
+    for etat in aef.initial:
+        affichage += "    __Q"+etat+"__ -> " + nom_etat(etat) + "; // Initial state arrow\n"
     for etat in aef.etats:
         for (symbole, etat_dest) in aef.transitions[etat]:
             affichage += "    " + nom_etat(etat) + " -> " + nom_etat(etat_dest) + " [label=" + symbole + "];\n"
@@ -82,7 +84,7 @@ def to_png(aef, filename=None, nom="Graph"):
         file.write(to_dot(aef, nom))
 
     call(("dot -Tpng " + tmp_file + " -o " + filename).split(" "))
-    call(("rm " + tmp_file).split(" "))
+    # call(("rm " + tmp_file).split(" "))
 
 
 def to_pdf(aef, filename=None, nom="Graph"):

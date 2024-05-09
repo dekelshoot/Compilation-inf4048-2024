@@ -1,11 +1,11 @@
-a = AEF.AEF("ab")
+a = AEF.AEF("['a', 'b']")
 a.ajout_etat("0")
 a.ajout_etat("1")
 a.ajout_etat("2")
 a.ajout_etat("3")
 a.ajout_etat("4", True)
 
-a.initial = "0"
+a.initial = ['0', '1']
 
 a.ajout_transition("0", "a", "1")
 a.ajout_transition("0", "b", "0")

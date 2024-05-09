@@ -1,0 +1,14 @@
+a = AEF.AEF("['a', 'b', 'c']")
+a.ajout_etat("1")
+a.ajout_etat("2")
+a.ajout_etat("3")
+a.ajout_etat("4", True)
+
+a.initial = ['1', '2']
+
+a.ajout_transition("1", "a", "1")
+a.ajout_transition("1", "a", "3")
+a.ajout_transition("2", "b", "2")
+a.ajout_transition("2", "b", "3")
+a.ajout_transition("3", "c", "3")
+a.ajout_transition("3", "c", "4")
