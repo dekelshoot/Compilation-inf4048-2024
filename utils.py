@@ -7,14 +7,20 @@ def save(aef, filename):
          @param aef le AEF à enregistrer
          @param filename le nom du fichier dans lequel
              l'automate sera sauvegardé."""
-    txt = "a = AEF.AEF(\"" + str(aef.alphabet) + "\")\n"
+    txt = "a = AEF.AEF("+ str(aef.alphabet) + ")\n"
     for etat in aef.etats:
-        if etat in aef.finals:
-            txt += "a.ajout_etat(\"" + etat + "\", True)\n"
+        if etat in aef.initial and etat in aef.finals:
+                txt += "a.ajout_etat(\"" + etat + "\", initial = True, final=True)\n"
         else:
-            txt += "a.ajout_etat(\"" + etat + "\")\n"
+            if etat in aef.finals:
+                txt += "a.ajout_etat(\"" + etat + "\", final=True)\n"
+            else:
+                if etat in aef.initial:
+                    txt += "a.ajout_etat(\"" + etat + "\", initial=True)\n"
+                else:
+                    txt += "a.ajout_etat(\"" + etat + "\")\n"
 
-    txt += "\na.initial = " + str(aef.initial)+ "\n\n"
+
 
     for etat in aef.etats:
         for (symbole, etat_dest) in aef.transitions[etat]:
