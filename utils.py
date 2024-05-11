@@ -68,8 +68,16 @@ def to_dot(aef, nom="Graph"):
     for etat in aef.initial:
         affichage += "    __Q"+etat+"__ -> " + nom_etat(etat) + "; // Initial state arrow\n"
     for etat in aef.etats:
+        transition_dict = {}
         for (symbole, etat_dest) in aef.transitions[etat]:
-            affichage += "    " + nom_etat(etat) + " -> " + nom_etat(etat_dest) + " [label=" + symbole + "];\n"
+            if etat_dest not in transition_dict:
+                transition_dict[etat_dest] = []
+            transition_dict[etat_dest].append(symbole)
+        for etat_dest in transition_dict:
+            transition_dict[etat_dest].sort()
+            affichage += "    " + nom_etat(etat) + " -> " + nom_etat(etat_dest) + " [label=\"" + ", ".join(transition_dict[etat_dest]) + "\"];\n"
+        # for (symbole, etat_dest) in aef.transitions[etat]:
+        #     affichage += "    " + nom_etat(etat) + " -> " + nom_etat(etat_dest) + " [label=" + symbole + "];\n"
     return affichage + "}\n"
 
 def to_png(aef, filename=None, nom="Graph"):

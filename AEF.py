@@ -123,6 +123,131 @@ class AEF:
         a.transitions = copy.deepcopy(self.transitions)
         return a
     
+    def successeurs(self, etat):
+        """ Renvoie la liste des successeurs de l'état spécifié dans le AEF.
+         @param etat indique l'état considéré.
+         @retourne la liste des successeurs de l'Etat."""
+        if etat not in self.etats:
+            print("erreur : l'état spécifié'" + etat + "'ne fait pas partie de l'automate.")
+            return
+
+        sucesseurs = []
+        for (symbole, etat_dest) in self.transitions[etat]:
+            if etat_dest not in sucesseurs:
+                sucesseurs.append(etat_dest)
+
+        return sucesseurs
+    
+    def predecesseurs(self, etat):
+        """ Renvoie la liste des prédécesseurs de l'état spécifié dans le AEF.
+             @param etat l'état considéré.
+             @retourne la liste des prédécesseurs de l'état."""
+        if etat not in self.etats:
+            print("erreur : l'état spécifique '" + etat + "'ne fait pas partie de l'automate.")
+            return
+
+        predecesseurs = []
+        for etat_src in self.etats:
+            for (symbole, etat_dest) in self.transitions[etat_src]:
+                if etat_dest == etat and etat_src not in predecesseurs:
+                    predecesseurs.append(etat_src)
+
+        return predecesseurs
+    
+    def complete(self):
+        """ Complète l'automate spécifié.
+             @renvoie l'AEF modifié."""
+        
+        aefc = self.clone()
+        if aefc.est_complet(): return aefc
+        # Trouver un nom pour Qp
+        qp = "Qp"
+        i = 0
+        while qp in aefc.etats:
+            qp = "Qp" + str(i)
+            i += 1
+
+        # Completion
+        aefc.ajout_etat(qp)
+        for etat in aefc.etats:
+            for symbole in aefc.alphabet:
+                if aefc.etat_dest(etat, symbole) == None:
+                    aefc.ajout_transition(etat, symbole, qp)
+
+        return aefc
+    
+    def est_complet(self):
+        """ Renvoie True si l'automate est complet, False sinon.
+            """
+        for etat in self.etats:
+            for symbole in self.alphabet:
+                if self.etat_dest(etat, symbole) == None:
+                    return False
+        return True
+
+    def etats_accessibles(self):
+        """ Renvoie la liste de tous les états accessibles dans l'automate spécifié.
+             @renvoie la liste des états accessibles."""
+        visite = []
+        a_visite = self.initial
+
+        while len(a_visite) > 0:
+            etat = a_visite.pop()
+            visite.append(etat)
+            for succ in self.successeurs(etat):
+                if succ not in visite and succ not in a_visite:
+                    a_visite.append(succ)
+
+        return visite
+    
+    def est_accessible(self, etat):
+        """ Renvoie True si l'état spécifié est accessible dans l'automate, renvoie
+             Faux sinon.
+             @param etat: indique l'état à tester.
+             @return True si l'état est accessible, False sinon."""
+        if etat not in self.etats:
+            print("erreur: l'état '" + etat + "' ne fait pas partie de l'automate.")
+            return False
+
+        return etat in self.etats_accessibles()
+
+    def accessible(self):
+        """ Renvoie True si le AEF spécifié est accessible (si tous ses états le sont,
+         accessible), Faux sinon.
+             @return True si le AEF est accessible, False sinon."""
+        return len(self.etats) == len(self.etats_accessibles())
+    
+    def etats_coaccessibles(self):
+        """ Renvoie la liste de tous les états co-accessibles dans l'automate spécifié.
+             @renvoie la liste des états co-accessibles."""
+        visite = []
+        a_visite = self.finals.copy()
+
+        while len(a_visite) > 0:
+            etat = a_visite.pop()
+            visite.append(etat)
+            for pred in self.predecesseurs( etat):
+                if pred not in visite and pred not in a_visite:
+                    a_visite.append(pred)
+
+        return visite
+
+    def est_coaccessible(self,etat):
+        """ Renvoie True si l'état spécifié est accessible dans l'automate, renvoie
+             Faux sinon.
+             @param etat: indique l'état à tester.
+             @return True si l'état est coaccessible, False sinon."""
+        if etat not in self.etats:
+            print("erreur: l'état'" + etat + "'ne fait pas partie de l'automate.")
+            return
+        
+        return etat in self.etats_coaccessibles()
+
+    def coaccessible(self):
+        """ Renvoie True si le AEF spécifié est coaccessible (si tous ses états accessible), Faux sinon.
+             @return True si le DFA est coaccessible, False sinon."""
+        return len(self.etats) == len(self.etats_coaccessibles())
+    
     def est_un_mot_accepte(self, mot, details = False):
         """ Exécute le AEF spécifié sur un mot et renvoie True si le mot est
              accepté.
@@ -299,7 +424,9 @@ class AEF:
                             new_transition[etat][symbole]=etat_dest
             print(new_transition)
             checker = True
+            clas = ""
             for symbole in aefd.alphabet:
+                # clas = 
                 for key in new_transition.keys():
                     if new_transition[key][symbole] not in A:
                         checker = False
