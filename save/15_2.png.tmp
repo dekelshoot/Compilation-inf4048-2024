@@ -10,8 +10,8 @@ digraph aaa {
     // Transitions
     __Q0__ -> Q_0; // Initial state arrow
     Q_0 -> Q_0 [label="a"];
-    Q_0 -> Q_1 [label="ε"];
-    Q_1 -> Q_0 [label="a, b"];
+    Q_0 -> Q_1 [label="b"];
+    Q_1 -> Q_0 [label="a"];
     Q_1 -> Q_2 [label="b"];
     Q_2 -> Q_2 [label="a, b"];
 }

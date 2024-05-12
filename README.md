@@ -127,11 +127,54 @@ Exécute le AEF spécifié sur un mot et renvoie True si le mot est accepté.\
 complementarise l'automate , qui reconnaît désormais le langage complementaire du AEF d'origine.\
 @return True si le AEFC modifié.
 
-### intersection(self, autre):
+### produit_AEF(self, autre, type="union"):
 
-Renvoie un nouvel automate qui est le produit des deux AEF spécifiés (self ∩ autre ).\
-@param autre le deuxième opérande du produit.\
+Renvoie un nouvel automate qui est le produit des deux AEF spécifiés.\
+@param autre le deuxième automate du produit.\
+@param type: est le type de produit que l'on souhaite éffectuer.\
+il peu être soit:
+
+- union :pour faire l'union de deux automates
+- intersection: pour faire l'intersection de deux automates
+- difference: pour faire la différence de deux automates
+
 @return True si le produit des deux AEF.
+
+### **or**(self,autre):
+
+surcharge de l'opérateur de OU binaire
+
+il permet de faire l'union de deux automates en utilisant la syntaxe suivante:
+
+soit aef1 et aef2 , deux automates. leurs union s'obtient en éffectuant l'opération suivante:
+
+- aef1 | oef2
+- aef3 = aef1 | oef2
+- aef3 est l'automate résultant de l'union de aef1 et aef2
+
+### **sub**(self,autre):
+
+surcharge de l'opérateur de soustration
+
+il permet de faire la différence de deux automates en utilisant la syntaxe suivante:
+
+soit aef1 et aef2 , deux automates. leurs différence s'obtient en éffectuant l'opération suivante:
+
+- aef1 - oef2
+- aef3 = aef1 - oef2
+- aef3 est l'automate résultant de la différence de aef1 et aef2
+
+### **and**(self,autre):
+
+surcharge de l'opérateur de ET binaire
+
+il permet de faire l'intersection de deux automates en utilisant la syntaxe suivante:
+
+soit aef1 et aef2 , deux automates. leurs intersection s'obtient en éffectuant l'opération suivante:
+
+- aef1 & oef2
+- aef3 = aef1 & oef2
+- aef3 est l'automate résultant de l'intersection de aef1 et aef2
 
 ### renome_etat(self):
 

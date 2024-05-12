@@ -1,0 +1,27 @@
+digraph aaa {
+    rankdir="LR";
+
+    // States (6)
+    node [shape = point ];     __Q1__ // Initial state
+    node [shape=circle];       Q_0 [label=1];
+    node [shape=circle];       Q_1 [label=2];
+    node [shape=circle];       Q_2 [label=3];
+    node [shape=circle];       Q_3 [label=4];
+    node [shape=circle];       Q_4 [label=5];
+    node [shape=doublecircle]; Q_5 [label=6];
+
+    // Transitions
+    __Q1__ -> Q_0; // Initial state arrow
+    Q_0 -> Q_1 [label="b"];
+    Q_0 -> Q_2 [label="a"];
+    Q_1 -> Q_5 [label="b"];
+    Q_1 -> Q_2 [label="a"];
+    Q_2 -> Q_3 [label="b"];
+    Q_2 -> Q_0 [label="a"];
+    Q_3 -> Q_4 [label="b"];
+    Q_3 -> Q_0 [label="a"];
+    Q_4 -> Q_4 [label="b"];
+    Q_4 -> Q_5 [label="a"];
+    Q_5 -> Q_5 [label="b"];
+    Q_5 -> Q_4 [label="a"];
+}

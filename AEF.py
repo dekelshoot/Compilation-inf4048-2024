@@ -351,6 +351,65 @@ class AEF:
 
         return inter.renome_etat()
     
+    def produit_AEF(self, autre, type="union"):
+        """ Renvoie un nouvel automate qui est le produit des deux AEF spécifiés.
+         @param autre le deuxième automate du produit.
+         @param type: est le type de produit que l'on souhaite éffectuer.
+         il peu être soit:
+         - union :pour faire l'union de deux automates
+         - intersection: pour faire l'intersection de deux automates
+         - difference:  pour faire la différence de deux automates
+
+         @return True si  le produit des deux AEF."""
+
+        aef1 = self.determinisation()
+        aef2 = autre.determinisation()
+        alphabet = set.union(set(list(aef1.alphabet)), set(list(aef2.alphabet)))
+        inter = AEF(alphabet)
+        a_visite = []
+
+        """ Renvoie le super-état correspondant aux états spécifiés et l'ajoute au produit AEF s'il n'existe pas. """
+        def obtenir_super_etat(etat1, etat2):
+            super_etat = "{" + etat1 + "," + etat2 + "}"
+
+            if type=="union":
+                if super_etat not in inter.etats:
+                    est_final = etat1 in aef1.finals or etat2 in aef2.finals
+                    inter.ajout_etat(super_etat, final = est_final)
+                    a_visite.append((super_etat, etat1, etat2))
+            if type=="intersection":
+                if super_etat not in inter.etats:
+                    est_final = etat1 in aef1.finals and etat2 in aef2.finals
+                    inter.ajout_etat(super_etat, final = est_final)
+                    a_visite.append((super_etat, etat1, etat2))
+            if type=="difference":
+                if super_etat not in inter.etats:
+                    est_final = etat1 in aef1.finals and etat2 not in aef2.finals
+                    inter.ajout_etat(super_etat, final = est_final)
+                    a_visite.append((super_etat, etat1, etat2))
+
+            return super_etat
+
+        inter.initial.append(obtenir_super_etat(aef1.initial[0], aef2.initial[0])) # Ajouter un état d'initialisation.
+
+        while len(a_visite) > 0:
+            (super_etat, etat1, etat2) = a_visite.pop()
+
+            # Add transitions.
+            for symbole in inter.alphabet:
+                etat_dest1 = aef1.etat_dest(etat1, symbole)
+                etat_dest2 = aef2.etat_dest(etat2, symbole)
+
+                if etat_dest1 is None or etat_dest2 is None:
+                    continue
+
+                dst_super_etat = obtenir_super_etat(etat_dest1, etat_dest2)
+
+                inter.ajout_transition(super_etat, symbole, dst_super_etat)
+
+
+        return inter.renome_etat()
+    
     def renome_etat(self):
         """
             renome les états d'un automate
@@ -759,3 +818,42 @@ class AEF:
                         minim.ajout_transition(super_etat, symbole, dst_super_etat)
 
         return minim.renome_etat()
+    
+    def __or__(self,autre):
+        """
+        surcharge de l'opérateur de OU binaire
+
+        il permet de faire l'union de deux automates en utilisant la syntaxe suivante:
+
+        soit aef1 et aef2 , deux automates. leurs union s'obtient en éffectuant l'opération suivante:
+        - aef1 | oef2
+        - aef3 = aef1 | oef2
+        - aef3 est l'automate résultant de l'union de aef1 et aef2
+        """
+        return self.produit_AEF(autre, type= "union")
+    
+    def __sub__(self,autre):
+        """
+        surcharge de l'opérateur de soustration
+
+        il permet de faire la différence de deux automates en utilisant la syntaxe suivante:
+
+        soit aef1 et aef2 , deux automates. leurs différence s'obtient en éffectuant l'opération suivante:
+        - aef1 - oef2
+        - aef3 = aef1 - oef2
+        - aef3 est l'automate résultant de la différence de aef1 et aef2
+        """
+        return self.produit_AEF(autre, type= "difference")
+    
+    def __and__(self,autre):
+        """
+        surcharge de l'opérateur de ET binaire
+
+        il permet de faire l'intersection de deux automates en utilisant la syntaxe suivante:
+
+        soit aef1 et aef2 , deux automates. leurs intersection s'obtient en éffectuant l'opération suivante:
+        - aef1 & oef2
+        - aef3 = aef1 & oef2
+        - aef3 est l'automate résultant de l'intersection de aef1 et aef2
+        """
+        return self.produit_AEF(autre, type= "intersection")

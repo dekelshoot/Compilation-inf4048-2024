@@ -30,25 +30,25 @@ import utils
 # utils.to_png(b,filename="./save/11_m.png",nom="aaa")
 
 
-a = AEF(['a','b'])
+# a = AEF(['a','b'])
 
-a.ajout_etat("0",initial=True)
-a.ajout_etat("1")
-a.ajout_etat("2" ,final=True)
-
-
-a.ajout_transition("0", "a", "0")
-a.ajout_transition("0", "a", "1")
-a.ajout_transition("0", "a", "2")
-a.ajout_transition("1", "b", "1")
-a.ajout_transition("1", "b", "2")
-a.ajout_transition("2", "a", "1")
+# a.ajout_etat("0",initial=True)
+# a.ajout_etat("1")
+# a.ajout_etat("2" ,final=True)
 
 
-utils.to_png(a,filename="./save/111.png",nom="aaa")
-b= a.determinisation()
-utils.to_png(b,filename="./save/111_d.png",nom="aaa")
-utils.to_png(b.minimise(),filename="./save/111_m.png",nom="aaa")
+# a.ajout_transition("0", "a", "0")
+# a.ajout_transition("0", "a", "1")
+# a.ajout_transition("0", "a", "2")
+# a.ajout_transition("1", "b", "1")
+# a.ajout_transition("1", "b", "2")
+# a.ajout_transition("2", "a", "1")
+
+
+# utils.to_png(a,filename="./save/111.png",nom="aaa")
+# b= a.determinisation()
+# utils.to_png(b,filename="./save/111_d.png",nom="aaa")
+# utils.to_png(b.minimise(),filename="./save/111_m.png",nom="aaa")
 
 
 # utils.save(a,"./save/11.aef")
@@ -109,32 +109,36 @@ utils.to_png(b.minimise(),filename="./save/111_m.png",nom="aaa")
 # utils.to_png(b,filename="./save/14.png",nom="aaa")
 
 
-# a = AEF(["a","b"])
-# a.ajout_etat("0", initial=True,final=True)
-# a.ajout_etat("1")
+a = AEF(["a","b"])
+a.ajout_etat("0", initial=True,final=True)
+a.ajout_etat("1")
 
-# a.ajout_transition("0", "a", "1")
-# a.ajout_transition("0", "b", "0")
-# a.ajout_transition("1", "a", "0")
-# a.ajout_transition("1", "b", "1")
+a.ajout_transition("0", "a", "1")
+a.ajout_transition("0", "b", "0")
+a.ajout_transition("1", "a", "0")
+a.ajout_transition("1", "b", "1")
 
-# utils.to_png(a,filename="./save/15.png",nom="aaa")
+utils.to_png(a,filename="./save/15.png",nom="aaa")
 
-# b = AEF(["a","b","ε"])
-# b.ajout_etat("0", initial=True,final=True)
-# b.ajout_etat("1", final=True)
-# b.ajout_etat("2")
+b = AEF(["a","b"])
+b.ajout_etat("0", initial=True,final=True)
+b.ajout_etat("1", final=True)
+b.ajout_etat("2")
 
-# b.ajout_transition("0", "a", "0")
-# b.ajout_transition("0", "ε", "1")
-# b.ajout_transition("1", "a", "0")
-# b.ajout_transition("1", "b", "2")
-# b.ajout_transition("1", "b", "2")
-# b.ajout_transition("2", "a", "2")
-# b.ajout_transition("2", "b", "2")
+b.ajout_transition("0", "a", "0")
+b.ajout_transition("0", "b", "1")
+b.ajout_transition("1", "a", "0")
+b.ajout_transition("1", "b", "2")
+b.ajout_transition("2", "a", "2")
+b.ajout_transition("2", "b", "2")
 
 
-# utils.to_png(b,filename="./save/15_2.png",nom="aaa")
+utils.to_png(b,filename="./save/15_2.png",nom="aaa")
+
+utils.to_png(a|b,filename="./save/15_union.png",nom="aaa")
+utils.to_png(a&b,filename="./save/15_inter.png",nom="aaa")
+utils.to_png(a-b,filename="./save/15_diff.png",nom="aaa")
+
 
 # p = a.intersection(b)
 # print(b.nature())
