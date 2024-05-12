@@ -157,14 +157,37 @@ permet de determiner la nature d'un automate\
 
 > aefd signifi automate à état fini déterministe
 
-retoune l'automate déterminiser \ il déterminise en suivant les étapes suivantes:
+retoune l'automate déterminiser \
+ il déterminise en suivant les étapes suivantes:
 
 - construction de la table de transition
 - réunion des états initiaux
-- rajouter dans la tables de transition les transition de la nouvelle réunion
-- pour chaque nouvelle nouvelle état, efectuer l'étape 3 jusqu'il n y ait plus de nouvelle état
+- rajouter dans la table de transitions les transition de la nouvelle réunion
+- pour chaque nouvelle nouvelle état, efectuer l'étape 3 jusqu'a ce qu'il n y ait plus de nouvelle état
 - l'état initial est le rassemblement des états initiaux
 - les états finaux contienent l'ensemble des états finaux
+
+### distingue_partition(self, partitions: List[List[str]], partition: List[str])
+
+Essayez de distinguer une partition d'état, en renvoyant la nouvelle partition générée par l'étape.\
+
+:param partitions : la liste des partitions d'état.\
+:type partitions : Liste[Liste[str]]
+:param partition : les partitions à distinguer.\
+:type partition : Liste[str]\
+:return : la liste des nouveaux\
+:rtype : Liste[Liste[str]]
+
+### etats_equivalents(self)
+
+Renvoie une liste contenant chaque groupe d'états équivalents.\
+:return : une liste de listes d'états équivalents.\
+:rtype : Liste[Liste[str]]
+
+### minimise(self):
+
+minimise l'automate spécifié (renvoie une copie).\
+:retour : le AEF minimisé.
 
 # Comment imprimer un automate
 

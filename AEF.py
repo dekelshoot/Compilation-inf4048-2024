@@ -97,7 +97,7 @@ class AEF:
     def __str__(self):
         """
         surcharger de l'opération d'afficharge__str__  
-        de manière à avoir possibilité d’afficher nos automates 
+        de manière à avoir possibilité d’afficher nos automates dans la console
         """
         print(self.alphabet)
         afficharge = "AEF :\n"
@@ -141,9 +141,9 @@ class AEF:
         return sucesseurs
     
     def emonde(self):
-        """ Renvoie True si le DFA spécifié est émondé (accessible et coaccessible),
+        """ Renvoie True si le self spécifié est émondé (accessible et coaccessible),
              Faux sinon.
-             @return True si le DFA est émondé, False sinon."""
+             @return True si le self est émondé, False sinon."""
         return self.accessible() and self.coaccessible()
     
     def predecesseurs(self, etat):
@@ -253,7 +253,7 @@ class AEF:
 
     def coaccessible(self):
         """ Renvoie True si le AEF spécifié est coaccessible (si tous ses états accessible), Faux sinon.
-             @return True si le DFA est coaccessible, False sinon."""
+             @return True si le self est coaccessible, False sinon."""
         return len(self.etats) == len(self.etats_coaccessibles())
     
     def est_un_mot_accepte(self, mot, details = False):
@@ -421,7 +421,7 @@ class AEF:
         """
         permet de determiner la nature d'un automate
 
-        @retur la nature de l'automate
+        @return la nature de l'automate
         """
         nature = []
         if self.est_deterministe():
@@ -589,4 +589,173 @@ class AEF:
     #             new_transitions.append(new_transition)
     #     print(new_transitions)
 
-    
+    def distingue_partition(self, partitions: List[List[str]], partition: List[str]) -> List[List[str]]:
+        """
+         Essayez de distinguer une partition d'état, en renvoyant la nouvelle partition générée par l'étape.
+
+         :param partitions : la liste des partitions d'état.
+         :type partitions : Liste[Liste[str]]
+         :param partition : les partitions à distinguer.
+         :type partition : Liste[str]
+         :return : la liste des nouveaux
+         :rtype : Liste[Liste[str]]
+         """
+        nouvelles_partitions = dict()
+
+        def partition_index(etat: str) -> int:
+            """
+             Renvoie l'identifiant de partition (dans la liste des partitions) pour l'état spécifié.
+
+             :param état: l'état
+             :type état: str
+             :return : l'index de la partition de l'état
+             :rtype: int
+            """
+            id = 0
+            for partition in partitions:
+                if etat in partition:
+                    return id
+                id = id + 1
+            return -1        
+
+        def partition_dest(etat: str, symbol: str) -> int:
+            """
+            Returns the index of the partition targeted by the transition for the specified etat and symbol.
+
+            :param etat: the source etat. 
+            :type etat: str
+            :param symbol: the symbol of the transition.
+            :type symbol: str
+            :return: the index of the targeted partition.
+            :rtype: int
+            """
+            dst = self.etat_dest(etat, symbol)
+            return partition_index(dst)
+        
+        for etat in partition:
+            coloration = []
+            for symbol in self.alphabet:
+                pid = partition_dest(etat, symbol)
+                coloration.append(pid)
+            
+            coloration = tuple(coloration)
+            if coloration in nouvelles_partitions:
+                nouvelles_partitions[coloration].append(etat)
+            else:
+                nouvelles_partitions[coloration] = [etat]
+
+        return list(nouvelles_partitions.values())
+
+    def etats_equivalents(self) -> List[List[str]]:
+        """
+         Renvoie une liste contenant chaque groupe d'états équivalents.
+
+         :return : une liste de listes d'états équivalents.
+         :rtype : Liste[Liste[str]]
+         """
+
+         # Diffusez les états finaux et non finaux.
+        partitions : List[List[str]] = [[], []]
+        for etat in self.etats:
+            if etat in self.finals:
+                partitions[0].append(etat)
+            else:
+                partitions[1].append(etat)
+
+        changes = True # Détermine si un changement s'est produit entre deux générations.
+
+        compteur_etape = 0
+        while changes:
+            #print(f"step {compteur_etape}")
+
+            n_p = []
+            for part in partitions:
+                part_d = self.distingue_partition(partitions, part)
+                #print(f"part = [{','.join(part)}] n_p: [{','.join(list(itertools.chain.from_iterable(part_d)))}]")
+                n_p.extend(part_d)
+            
+            if len(n_p) == len(partitions):
+                changes = False
+
+            partitions = n_p 
+            #print(f"ended step {compteur_etape} : \n")
+            #for part in partitions:
+                #print(f"   - {part}")
+
+            compteur_etape = compteur_etape + 1
+
+        return partitions
+
+    def minimise(self):
+        """
+         minimise l'automate spécifié (renvoie une copie).
+
+         :retour : le AEF minimisé.
+         """
+
+        if len(self.etats) < 2:
+            return copy.deepcopy(self) 
+        
+        minim = AEF(self.alphabet)
+        eq_etats = self.etats_equivalents()
+
+        def groupe_etat(etat: str) -> List[str]:
+            """
+            Renvoie le groupe d'état correspondant à l'état spécifié.
+
+             :param état : l'état.
+             :type état: str
+             :return : le groupe d'état correspondant.
+             :rtype : Liste[str]
+            """
+            for etat_group in eq_etats:
+                if etat in etat_group:
+                    return etat_group
+            return None
+
+        a_visite = [] # Liste des paires (super_etat, etat_group)
+
+        def recuperer_super_etat(etat_group: List[str]) -> str:
+            """
+             Renvoie le superétat correspondant au etat_group spécifié.
+             Si le superétat n'existe pas dan minim , ajoutez-le et ajoutez la paire (super_etat, etat_group) à la liste des paires à visiter.
+
+             :param etat_group : le groupe d'état (partition) à fusionner dans un superétat.
+             :type etat_group : Liste[str]
+             :return : le surétat correspondant à la partition.
+             :rtype: str
+             """
+            super_etat = "{" + ",".join(etat_group) + "}"
+
+            if super_etat not in minim.etats:
+                is_final =  etat_group[0] in self.finals # Si l’un est définitif, tous sont définitifs.
+                minim.ajout_etat(super_etat, is_final)
+                a_visite.append((super_etat, etat_group)) # rappelez-vous la relation
+
+            return super_etat
+        
+
+        # Construire un automate minimal
+        minim.initial =[]
+        for etat in self.initial:
+            if recuperer_super_etat(groupe_etat(etat)) not in minim.initial:
+                minim.initial.append(recuperer_super_etat(groupe_etat(etat))) # Ajoutez l'état initial
+
+        while len(a_visite) > 0:
+            #print("constructing: " + str(ret))
+            (super_etat, sg) = a_visite.pop()
+
+            # Ajoutez des transitions.
+            for etat in sg:
+                for symbole in minim.alphabet:
+                    etat_dest = self.etat_dest(etat, symbole)
+
+                    if etat_dest is None:
+                        continue
+
+                    dst_super_etat = recuperer_super_etat(groupe_etat(etat_dest))
+
+                    if (symbole, dst_super_etat) not in minim.transitions[super_etat]:
+                        minim.ajout_transition(super_etat, symbole, dst_super_etat)
+
+        return minim.renome_etat()
