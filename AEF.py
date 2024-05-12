@@ -418,6 +418,11 @@ class AEF:
         return False
     
     def nature(self) -> str:
+        """
+        permet de determiner la nature d'un automate
+
+        @retur la nature de l'automate
+        """
         nature = []
         if self.est_deterministe():
             nature.append("AFD") 

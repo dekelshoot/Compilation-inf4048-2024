@@ -106,7 +106,7 @@ b.ajout_transition("0", "a", "0")
 b.ajout_transition("0", "ε", "1")
 b.ajout_transition("1", "a", "0")
 b.ajout_transition("1", "b", "2")
-b.ajout_transition("1", "b", "0")
+b.ajout_transition("1", "b", "2")
 b.ajout_transition("2", "a", "2")
 b.ajout_transition("2", "b", "2")
 
