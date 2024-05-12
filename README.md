@@ -6,7 +6,7 @@ Compilation-inf4048-2024
 
 ## L’implémentation de l'automate
 
-l'implementation de l'automate est réalisé dans le ficier [AEF.py](./AEF.py)
+l'implementation de l'automate est réalisée dans le ficier [AEF.py](./AEF.py)
 
 > AEF signifie automate à états finis
 
@@ -18,11 +18,11 @@ Pour résumer le design que nous avons choisi, un automate est représenté par 
 - **finals**: Une liste d’états finaux, encore une fois leurs noms.
 - **transition**: Les transitions, représentés par un dictionnaire associant une chaîne de caractère (le nom de l’état d’origine), avec une paire symbole / état-cible.
 
-## Eplication des fonctions de la classe AEF
+## Explication des fonctions de la classe AEF
 
 ### **init**(self, alphabet)
 
-Initialisez l'automate à étas fini.\
+Initialisez l'automate à étas finis.\
 @param l'alphabet de l'automate.
 
 ### ajout_etat(self, etat, final = False, initial = False):
