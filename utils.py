@@ -61,7 +61,7 @@ def to_dot(aef, nom="Graph"):
             affichage += "node [shape=doublecircle]; "
         else:
             affichage += "node [shape=circle];       "
-        affichage += nom_etat(etat) + " [label=" + etat + "];\n"
+        affichage += nom_etat(etat) + " [label=" + str(etat) + "];\n"
 
     # Transitions
     affichage += "\n    // Transitions\n"

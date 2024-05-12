@@ -1,0 +1,15 @@
+digraph aaa {
+    rankdir="LR";
+
+    // States (2)
+    node [shape = point ];     __Q0__ // Initial state
+    node [shape=doublecircle]; Q_0 [label=0];
+    node [shape=circle];       Q_1 [label=1];
+
+    // Transitions
+    __Q0__ -> Q_0; // Initial state arrow
+    Q_0 -> Q_1 [label="a"];
+    Q_0 -> Q_0 [label="b"];
+    Q_1 -> Q_0 [label="a"];
+    Q_1 -> Q_1 [label="b"];
+}

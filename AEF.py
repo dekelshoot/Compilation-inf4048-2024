@@ -1,5 +1,7 @@
 import copy
-
+from typing import List, Tuple
+import copy
+import itertools
 class AEF:
     """
     un automate est représenté par la classe  AEF, qui va contenir :
@@ -28,7 +30,7 @@ class AEF:
         """ Une liste contenant le nom des états finaux. """
         
         self.alphabet = alphabet
-        """ Une chaîne contenant tous les symboles de l'alphabet."""
+        """ Une Liste contenant tous les symboles de l'alphabet."""
 
     def ajout_etat(self, etat, final = False, initial = False):
         """ Ajoutez un nouvel état. Erreur d'impression si l'état existe déjà.
@@ -138,6 +140,12 @@ class AEF:
 
         return sucesseurs
     
+    def emonde(self):
+        """ Renvoie True si le DFA spécifié est émondé (accessible et coaccessible),
+             Faux sinon.
+             @return True si le DFA est émondé, False sinon."""
+        return self.accessible() and self.coaccessible()
+    
     def predecesseurs(self, etat):
         """ Renvoie la liste des prédécesseurs de l'état spécifié dans le AEF.
              @param etat l'état considéré.
@@ -156,7 +164,7 @@ class AEF:
     
     def complete(self):
         """ Complète l'automate spécifié.
-             @renvoie l'AEF modifié."""
+             @return True si  l'AEF modifié."""
         
         aefc = self.clone()
         if aefc.est_complet(): return aefc
@@ -187,7 +195,7 @@ class AEF:
 
     def etats_accessibles(self):
         """ Renvoie la liste de tous les états accessibles dans l'automate spécifié.
-             @renvoie la liste des états accessibles."""
+             @return True si  la liste des états accessibles."""
         visite = []
         a_visite = self.initial
 
@@ -219,7 +227,7 @@ class AEF:
     
     def etats_coaccessibles(self):
         """ Renvoie la liste de tous les états co-accessibles dans l'automate spécifié.
-             @renvoie la liste des états co-accessibles."""
+             @return True si  la liste des états co-accessibles."""
         visite = []
         a_visite = self.finals.copy()
 
@@ -284,6 +292,148 @@ class AEF:
         if details: print("se terminant par un état non acceptant '" + etat_courant + "'")
         return False
     
+    def complementaire(self):
+        """ complementarise l'automate , qui reconnaît désormais le langage complementaire du AEF d'origine.
+             @return True si  le AEFC modifié."""
+        if not self.est_complet():
+            print("erreur : le complementaire nécessite un AEF complet.")
+            return
+
+        aefc = self.clone()
+        ancien_final = aefc.finals.copy()
+        aefc.finals.clear()
+
+        for etat in aefc.etats:
+            if etat not in ancien_final:
+                aefc.finals.append(etat)
+
+        return aefc
+    
+    def intersection(self, autre):
+        """ Renvoie un nouvel automate qui est le produit des deux AEF spécifiés.
+         @param autre le deuxième opérande du produit.
+         @return True si  le produit des deux AEF."""
+
+        aef1 = self.determinisation()
+        aef2 = autre.determinisation()
+        alphabet = set.union(set(list(aef1.alphabet)), set(list(aef2.alphabet)))
+        inter = AEF(alphabet)
+        a_visite = []
+
+        """ Renvoie le super-état correspondant aux états spécifiés et l'ajoute au produit AEF s'il n'existe pas. """
+        def obtenir_super_etat(etat1, etat2):
+            super_etat = "{" + etat1 + "," + etat2 + "}"
+
+            if super_etat not in inter.etats:
+                est_final = etat1 in aef1.finals and etat2 in aef2.finals
+                inter.ajout_etat(super_etat, final = est_final)
+                a_visite.append((super_etat, etat1, etat2))
+
+            return super_etat
+
+        inter.initial.append(obtenir_super_etat(aef1.initial[0], aef2.initial[0])) # Ajouter un état d'initialisation.
+
+        while len(a_visite) > 0:
+            (super_etat, etat1, etat2) = a_visite.pop()
+
+            # Add transitions.
+            for symbole in inter.alphabet:
+                etat_dest1 = aef1.etat_dest(etat1, symbole)
+                etat_dest2 = aef2.etat_dest(etat2, symbole)
+
+                if etat_dest1 is None or etat_dest2 is None:
+                    continue
+
+                dst_super_etat = obtenir_super_etat(etat_dest1, etat_dest2)
+
+                inter.ajout_transition(super_etat, symbole, dst_super_etat)
+
+
+        return inter.renome_etat()
+    
+    def renome_etat(self):
+        """
+            renome les états d'un automate
+            @return l'AEF dont les états ont été renomés.
+        """
+        alphabet =self.alphabet
+        initial = []
+        finals = []
+        transitions = {}
+        etats = [str(x) for x in range(1,len(self.etats)+1)]
+        for etat in self.etats:
+            if etat in self.initial:
+                initial.append(etats[self.etats.index(etat)])
+            if etat in self.finals:
+                finals.append(etats[self.etats.index(etat)])
+        for key in self.transitions.keys():
+            transitions[etats[self.etats.index(key)]] = []
+            for trans in self.transitions[key]:
+                transitions[etats[self.etats.index(key)]].append((trans[0],etats[self.etats.index(trans[1])]))
+        
+        aef_renome = AEF(alphabet)
+        aef_renome.etats = etats
+        aef_renome.initial = initial
+        aef_renome.finals = finals
+        aef_renome.transitions = transitions
+
+        return aef_renome
+    
+    def est_deterministe(self)->bool:
+        """
+        permet de verifier si l'AEF est déterministe
+
+        @return True si l'AEF est déterministe
+        """
+        if len(self.initial)>1:
+            return False
+        if len(self.etats) == 0 or len(self.alphabet) == 0:
+            return False
+        
+        for key in self.transitions.keys():
+            nombre_trans = [0 for x in range(1,len(self.alphabet)+1)]
+            for trans in self.transitions[key]:
+                nombre_trans[self.alphabet.index(trans[0])] +=1
+            for i in nombre_trans:
+                if i>1:
+                    return False
+        return True
+    
+    def est_epsilone_non_deterministe(self)->bool:
+        """
+        permet de verifier si l'AEF est un ε-AFN
+
+        @return True si l'AEF est un ε-AFN
+        """
+        if len(self.initial)>1:
+            return False
+        if len(self.etats) == 0 or len(self.alphabet) == 0:
+            return False
+        
+        for key in self.transitions.keys():
+            for trans in self.transitions[key]:
+                if trans[0] == 'ε':
+                    return True
+            
+        return False
+    
+    def nature(self) -> str:
+        nature = []
+        if self.est_deterministe():
+            nature.append("AFD") 
+        else:
+            if self.est_epsilone_non_deterministe():
+                nature.append("ε-AFN")  
+            else:
+                nature.append("AFN")
+           
+        if self.est_complet():
+            nature.append("Complet") 
+
+        if len(nature) == 0:
+            nature = ['non correctement defini.']   
+        return "Cet automate est : " + ", ".join(nature)
+
     def determinisation(self):
         """
         aefd signifi automate à état fini déterministe
@@ -353,86 +503,85 @@ class AEF:
                     aefd.ajout_transition(etats_renomes[new_etats.index(key)],ke,etats_renomes[new_etats.index(str(new_transition[key][ke]))])
         return aefd
     
-    def minimisation(self):
-        """
-        minimisation retourne l'automate minimisé
+    # def minimisation(self):
+    #     """
+    #     minimisation retourne l'automate minimisé
 
-        elle s'exécute en respectant les étapes suivantes:
-        - Elimination des états inaccessibles(en utilisant l'algorithme de marquage)
-        - regrouper les états congruent(appartenent à la même classe d'équvalence)
-        """
-        #élimination des états inaccessibles
-        new_transition = {}
-        new_etats = copy.copy(self.initial)
-        temp_etats = copy.copy(self.initial)
-        while len(temp_etats)!=0:
-            etat = temp_etats[0]
-            temp_etats.remove(etat)
-            new_transition[etat] = {}
-            for symbole in self.alphabet:
-                new_transition[str(etat)][symbole] = ""
-            for symbole in self.alphabet:
-                for (s, etat_dest) in self.transitions[etat]:
-                    if s == symbole:
-                        new_transition[etat][symbole]=etat_dest
+    #     elle s'exécute en respectant les étapes suivantes:
+    #     - Elimination des états inaccessibles(en utilisant l'algorithme de marquage)
+    #     - regrouper les états congruent(appartenent à la même classe d'équvalence)
+    #     """
+    #     #élimination des états inaccessibles
+    #     new_transition = {}
+    #     new_etats = copy.copy(self.initial)
+    #     temp_etats = copy.copy(self.initial)
+    #     while len(temp_etats)!=0:
+    #         etat = temp_etats[0]
+    #         temp_etats.remove(etat)
+    #         new_transition[etat] = {}
+    #         for symbole in self.alphabet:
+    #             new_transition[str(etat)][symbole] = ""
+    #         for symbole in self.alphabet:
+    #             for (s, etat_dest) in self.transitions[etat]:
+    #                 if s == symbole:
+    #                     new_transition[etat][symbole]=etat_dest
             
-            for key in new_transition[etat].keys():
-                if new_transition[etat][key] not in new_etats :
-                    if  new_transition[etat][key]!="":
-                        new_etats.append(new_transition[etat][key])
-                        temp_etats.append(new_transition[etat][key])
+    #         for key in new_transition[etat].keys():
+    #             if new_transition[etat][key] not in new_etats :
+    #                 if  new_transition[etat][key]!="":
+    #                     new_etats.append(new_transition[etat][key])
+    #                     temp_etats.append(new_transition[etat][key])
     
-        #construction du nouvelle automate
-        aefd = AEF(self.alphabet)
-        #ajout des états
-        for etat in new_etats:
-            # ajout de l'état initial
-            if etat in self.initial:
-                if etat in self.finals:
-                    aefd.ajout_etat(etat,initial=True, final=True)
-                else:
-                    aefd.ajout_etat(etat,initial=True)
-            # ajout des états finaux
-            if etat in self.finals:
-                if etat not in aefd.etats:
-                    aefd.ajout_etat(etat,final=True)
-            #ajout des autres états
-            if etat not in aefd.etats:
-                aefd.ajout_etat(etat)
+    #     #construction du nouvelle automate
+    #     aefd = AEF(self.alphabet)
+    #     #ajout des états
+    #     for etat in new_etats:
+    #         # ajout de l'état initial
+    #         if etat in self.initial:
+    #             if etat in self.finals:
+    #                 aefd.ajout_etat(etat,initial=True, final=True)
+    #             else:
+    #                 aefd.ajout_etat(etat,initial=True)
+    #         # ajout des états finaux
+    #         if etat in self.finals:
+    #             if etat not in aefd.etats:
+    #                 aefd.ajout_etat(etat,final=True)
+    #         #ajout des autres états
+    #         if etat not in aefd.etats:
+    #             aefd.ajout_etat(etat)
         
-        #ajout des transitions
-        for key in new_transition.keys():
-            for ke in new_transition[key].keys():
-                if new_transition[key][ke] != []:
-                    aefd.ajout_transition(key, ke, new_transition[key][ke])
-        # print(aefd)
+    #     #ajout des transitions
+    #     for key in new_transition.keys():
+    #         for ke in new_transition[key].keys():
+    #             if new_transition[key][ke] != []:
+    #                 aefd.ajout_transition(key, ke, new_transition[key][ke])
+    #     # print(aefd)
 
-        # creer deux classes d'équivalences
-        A = aefd.finals.copy()
-        B = list(set(aefd.etats)-set(A))
+    #     # creer deux classes d'équivalences
+    #     A = aefd.finals.copy()
+    #     B = list(set(aefd.etats)-set(A))
 
-        new_transitions = []
-        new_transition = {}
-        classes = [A]
-        for classe in classes:
-            for etat in classe:
-                new_transition[etat] = {}
-                for symbole in aefd.alphabet:
-                    new_transition[etat][symbole] = ""
-                    for (s, etat_dest) in aefd.transitions[etat]:
-                        if s == symbole:
-                            new_transition[etat][symbole]=etat_dest
-            print(new_transition)
-            checker = True
-            clas = ""
-            for symbole in aefd.alphabet:
-                # clas = 
-                for key in new_transition.keys():
-                    if new_transition[key][symbole] not in A:
-                        checker = False
-            if checker == True:
-                new_transitions.append(new_transition)
-        print(new_transitions)
-        
+    #     new_transitions = []
+    #     new_transition = {}
+    #     classes = [A]
+    #     for classe in classes:
+    #         for etat in classe:
+    #             new_transition[etat] = {}
+    #             for symbole in aefd.alphabet:
+    #                 new_transition[etat][symbole] = ""
+    #                 for (s, etat_dest) in aefd.transitions[etat]:
+    #                     if s == symbole:
+    #                         new_transition[etat][symbole]=etat_dest
+    #         print(new_transition)
+    #         checker = True
+    #         clas = ""
+    #         for symbole in aefd.alphabet:
+    #             # clas = 
+    #             for key in new_transition.keys():
+    #                 if new_transition[key][symbole] not in A:
+    #                     checker = False
+    #         if checker == True:
+    #             new_transitions.append(new_transition)
+    #     print(new_transitions)
 
-
+    
