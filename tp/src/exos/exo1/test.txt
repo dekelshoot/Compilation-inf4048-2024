@@ -1,0 +1,4 @@
+Le mur est bleu.
+Il y a un mur dans la pièce.
+Ce mur est solide.
+Mur, mur, mur, combien de murs ?
