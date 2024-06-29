@@ -6,7 +6,7 @@
 int main(int argc, char *argv[]) {
     // Vérifie si le nombre d'arguments est correct
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <filename> <word>\n", argv[0]); // Affiche un message d'erreur
+        fprintf(stderr, "Commande incorrecte!!!\n veillez suivre cet exemple: %s <filename> <word>\n", argv[0]); // Affiche un message d'erreur
         return 1; // Retourne une erreur
     }
 

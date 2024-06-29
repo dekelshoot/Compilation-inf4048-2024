@@ -28,7 +28,7 @@ char* afficher(char *valeur, char *type) {
 int main(int argc, char *argv[]) {
     // Vérifier le nombre d'arguments
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s <expression>\n", argv[0]); // Afficher l'utilisation correcte
+        fprintf(stderr, "Commande incorrecte!!!\n veillez suivre cet exemple: %s <expression>\n", argv[0]); // Afficher l'utilisation correcte
         return 1; // Retourner une erreur
     }
 

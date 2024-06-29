@@ -1,0 +1,38 @@
+﻿3.3.1
+Exercice 11
+Enoncé : Construire la table de la grammaire :
+1. E → Ac
+2. A → AaAb
+3. A → d
+À l’aide de la table construite, analysez le mot dcadcb.
+
+
+
+
+first(E) = {d}
+first(A) = {d}
+
+
+follow(E) = {$}
+follow(A) = {c,a,b}
+
+
+
+
+Construire la table de la grammaire 
+
+		a		b		c		d			$
+E								E → Ac
+A								A → d
+
+
+Analyseur
+
+
+pile			entrée				sortie
+
+$E				dcadcb$				E → Ac
+$cA				dcadcb$				A → d
+$cd				cadcb$				
+$c				cadcb$
+$				adcb$				refusé
