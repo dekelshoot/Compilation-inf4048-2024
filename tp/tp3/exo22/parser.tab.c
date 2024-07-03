@@ -67,14 +67,50 @@
 
 
 /* First part of user prologue.  */
-#line 2 "parser.y"
+#line 1 "parser.y"
 
 #include <stdio.h>
-#include "lexer.h"
-int yylex(void);
-int yyerror(const char *s);
+#include <stdlib.h>
+#include <string.h>
 
-#line 78 "parser.tab.c"
+
+typedef struct {
+    char* name;
+    int value;
+} variable;
+
+variable vars[100];
+int var_count = 0;
+
+int yylex(void);
+void yyerror(const char *s);
+int find_var_index(const char* name);
+int get_var_value(const char* name);
+void set_var_value(const char* name, int value);
+
+FILE *outfile;
+
+
+
+char *header = "extern printf, scanf\nsection .data\n; déclaration des variables en mémoire\na: dd 0\nb: dd 0\nc: dd 0\nd: dd 0\nfmt: db \"%d\", 10, 0\nfmtlec: db \"%d\", 0\nsection .text\nglobal _start\n\n_start:\n\n";
+char *footer = "mov eax, 1 ; sys_exit\nmov ebx, 0 ; Exit avec le code de retour 0 (pas d'erreur)\nint 80h";
+
+char *add = "; addition\npop eax\npop ebx\nadd eax, ebx\npush eax\n\n";
+char *mul = "; multiplication\npop eax\npop ebx\nimul eax, ebx\npush eax\n\n";
+char *affec = "; affectation\npop eax\nmov";
+char *take = "; récupération en mémoire\nmov eax, ";
+char *aff1 = "; afficher\nmov eax, ";
+char *aff2 = "\npush eax\npush dword fmt\ncall printf\n\n";
+char *lire1 = "; lire\npush ";
+char *lire2 = "\npush dword fmtlec\ncall scanf\n\n";
+char *cmp = "pop ebx\npop eax\ncmp eax, ebx\n\n";
+
+void print_assembly(const char *instr);
+void declare_variable(const char *name);
+void print_assembly_with_value(const char *instr, int value);
+void generate_print_code(const char *varname);
+
+#line 114 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -105,14 +141,19 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_INTEGER = 3,                    /* INTEGER  */
-  YYSYMBOL_4_ = 4,                         /* '+'  */
-  YYSYMBOL_5_ = 5,                         /* '*'  */
-  YYSYMBOL_YYACCEPT = 6,                   /* $accept  */
-  YYSYMBOL_S = 7,                          /* S  */
-  YYSYMBOL_E = 8,                          /* E  */
-  YYSYMBOL_T = 9,                          /* T  */
-  YYSYMBOL_F = 10                          /* F  */
+  YYSYMBOL_INT = 3,                        /* INT  */
+  YYSYMBOL_ID = 4,                         /* ID  */
+  YYSYMBOL_PRINT = 5,                      /* PRINT  */
+  YYSYMBOL_ASSIGN = 6,                     /* ASSIGN  */
+  YYSYMBOL_SEMI = 7,                       /* SEMI  */
+  YYSYMBOL_PLUS = 8,                       /* PLUS  */
+  YYSYMBOL_TIMES = 9,                      /* TIMES  */
+  YYSYMBOL_YYACCEPT = 10,                  /* $accept  */
+  YYSYMBOL_S = 11,                         /* S  */
+  YYSYMBOL_I = 12,                         /* I  */
+  YYSYMBOL_E = 13,                         /* E  */
+  YYSYMBOL_T = 14,                         /* T  */
+  YYSYMBOL_F = 15                          /* F  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -438,21 +479,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  6
+#define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   8
+#define YYLAST   13
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  6
+#define YYNTOKENS  10
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  5
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  7
+#define YYNRULES  11
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  11
+#define YYNSTATES  19
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   258
+#define YYMAXUTOK   264
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -470,7 +511,6 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     5,     4,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -491,14 +531,17 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     1,     2,     3
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    12,    12,    15,    16,    19,    20,    23
+       0,    61,    61,    62,    65,    70,    76,    81,    87,    92,
+      98,   103
 };
 #endif
 
@@ -514,8 +557,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INTEGER", "'+'",
-  "'*'", "$accept", "S", "E", "T", "F", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "INT", "ID", "PRINT",
+  "ASSIGN", "SEMI", "PLUS", "TIMES", "$accept", "S", "I", "E", "T", "F", YY_NULLPTR
 };
 
 static const char *
@@ -525,7 +568,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-5)
+#define YYPACT_NINF (-7)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -539,8 +582,8 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -3,    -5,     1,    -2,    -1,    -5,    -5,    -3,    -3,    -1,
-      -5
+      -3,     2,    -1,     0,    -7,     1,    -7,    -7,    -3,    -7,
+      -7,    -2,     3,    -7,    -7,     1,     1,     3,    -7
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -548,20 +591,20 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     7,     0,     2,     4,     6,     1,     0,     0,     3,
-       5
+       0,     0,     0,     0,     3,     0,     5,     1,     0,    10,
+      11,     4,     7,     9,     2,     0,     0,     6,     8
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -5,    -5,    -5,    -4,     0
+      -7,    -7,     5,    -7,    -6,    -5
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,     5
+       0,     3,     4,    11,    12,    13
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -569,32 +612,36 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     6,     7,     9,     8,     0,     0,     0,    10
+       7,     1,     2,     6,     9,    10,    15,     8,     5,    17,
+       0,    18,    16,    14
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     0,     4,     7,     5,    -1,    -1,    -1,     8
+       0,     4,     5,     4,     3,     4,     8,     7,     6,    15,
+      -1,    16,     9,     8
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     7,     8,     9,    10,     0,     4,     5,     9,
-      10
+       0,     4,     5,    11,    12,     6,     4,     0,     7,     3,
+       4,    13,    14,    15,    12,     8,     9,    14,    15
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,     6,     7,     8,     8,     9,     9,    10
+       0,    10,    11,    11,    12,    12,    13,    13,    14,    14,
+      15,    15
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     3,     1,     3,     1,     1
+       0,     2,     3,     1,     3,     2,     3,     1,     3,     1,
+       1,     1
 };
 
 
@@ -1057,44 +1104,85 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* S: E  */
-#line 12 "parser.y"
-     { printf("Reduction: S -> E  Fin!!\n"); }
-#line 1064 "parser.tab.c"
+  case 4: /* I: ID ASSIGN E  */
+#line 65 "parser.y"
+               { 
+        set_var_value((yyvsp[-2].sval), (yyvsp[0].ival)); 
+        printf("Assignment: %s = %d\n", (yyvsp[-2].sval), (yyvsp[0].ival)); 
+        fprintf(outfile, "%s [%d], eax\n\n", affec, (yyvsp[0].ival));
+    }
+#line 1115 "parser.tab.c"
     break;
 
-  case 3: /* E: E '+' T  */
-#line 15 "parser.y"
-           { printf("Reduction: E -> E + T \n"); }
-#line 1070 "parser.tab.c"
+  case 5: /* I: PRINT ID  */
+#line 70 "parser.y"
+            { 
+        printf("Print: %s\n", (yyvsp[0].sval)); 
+        fprintf(outfile, "%s [%s] %s", aff1, (yyvsp[0].sval), aff2);
+    }
+#line 1124 "parser.tab.c"
     break;
 
-  case 4: /* E: T  */
-#line 16 "parser.y"
-      {printf("Réduction E -> T \t\t $1=%d\t$$=%d\n",yyvsp[0],yyval); }
-#line 1076 "parser.tab.c"
+  case 6: /* E: E PLUS T  */
+#line 76 "parser.y"
+            { 
+        (yyval.ival) = (yyvsp[-2].ival) + (yyvsp[0].ival); 
+        printf("Reduction: E -> E + T \t\t%d + %d = %d\n", (yyvsp[-2].ival), (yyvsp[0].ival), (yyval.ival)); 
+        fprintf(outfile, "%s", add);
+    }
+#line 1134 "parser.tab.c"
     break;
 
-  case 5: /* T: T '*' F  */
-#line 19 "parser.y"
-           { printf("Reduction: T -> T * F\n"); }
-#line 1082 "parser.tab.c"
+  case 7: /* E: T  */
+#line 81 "parser.y"
+     { 
+        (yyval.ival) = (yyvsp[0].ival); 
+        printf("Reduction: E -> T \t\t%d\n", (yyvsp[0].ival)); 
+    }
+#line 1143 "parser.tab.c"
     break;
 
-  case 6: /* T: F  */
-#line 20 "parser.y"
-        {printf("Réduction T -> F   \t\t $1=%d\t$$=%d\n",yyvsp[0],yyval); }
-#line 1088 "parser.tab.c"
+  case 8: /* T: T TIMES F  */
+#line 87 "parser.y"
+             { 
+        (yyval.ival) = (yyvsp[-2].ival) * (yyvsp[0].ival); 
+        printf("Reduction: T -> T * F \t\t%d * %d = %d\n", (yyvsp[-2].ival), (yyvsp[0].ival), (yyval.ival)); 
+        fprintf(outfile, "%s", mul);
+    }
+#line 1153 "parser.tab.c"
     break;
 
-  case 7: /* F: INTEGER  */
-#line 23 "parser.y"
-           { printf("Reduction: F -> int   \t\t $1=%d\t$$=%d\n",yyvsp[0],yyval); }
-#line 1094 "parser.tab.c"
+  case 9: /* T: F  */
+#line 92 "parser.y"
+     { 
+        (yyval.ival) = (yyvsp[0].ival); 
+        printf("Reduction: T -> F \t\t%d\n", (yyvsp[0].ival)); 
+    }
+#line 1162 "parser.tab.c"
+    break;
+
+  case 10: /* F: INT  */
+#line 98 "parser.y"
+       { 
+        (yyval.ival) = (yyvsp[0].ival); 
+        printf("Reduction: F -> int \t\t%d\n", (yyvsp[0].ival)); 
+        fprintf(outfile, "push %d\n", (yyvsp[0].ival));
+    }
+#line 1172 "parser.tab.c"
+    break;
+
+  case 11: /* F: ID  */
+#line 103 "parser.y"
+      { 
+        (yyval.ival) = get_var_value((yyvsp[0].sval)); 
+        printf("Reduction: F -> id \t\t%s = %d\n", (yyvsp[0].sval), (yyval.ival)); 
+        fprintf(outfile, "%s [%d]\npush eax\n", take, (yyval.ival));
+    }
+#line 1182 "parser.tab.c"
     break;
 
 
-#line 1098 "parser.tab.c"
+#line 1186 "parser.tab.c"
 
       default: break;
     }
@@ -1287,15 +1375,77 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 26 "parser.y"
+#line 109 "parser.y"
 
 
 int main() {
+    outfile = fopen("exo22.asm", "w");
+    if (outfile == NULL) {
+        fprintf(stderr, "Erreur: Impossible d'ouvrir le fichier exo22.asm\n");
+        return 1;
+    }
+
+
+    fprintf(outfile, "%s", header);
     yyparse();
+    fprintf(outfile, "%s", footer);
+    
+    fclose(outfile);
     return 0;
 }
 
-int yyerror(const char *s) {
-    printf("Erreur syntaxique: %s\n", s);
-    return 0;
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+int find_var_index(const char* name) {
+    for (int i = 0; i < var_count; i++) {
+        if (strcmp(vars[i].name, name) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int get_var_value(const char* name) {
+    int index = find_var_index(name);
+    if (index == -1) {
+        fprintf(stderr, "Undefined variable: %s\n", name);
+        exit(1);
+    }
+    return vars[index].value;
+}
+
+void set_var_value(const char* name, int value) {
+    int index = find_var_index(name);
+    if (index == -1) {
+        vars[var_count].name = strdup(name);
+        vars[var_count].value = value;
+        var_count++;
+    } else {
+        vars[index].value = value;
+    }
+}
+
+void print_assembly(const char *instr) {
+    printf("%s\n", instr);
+    fprintf(outfile, "%s\n", instr);
+}
+
+void print_assembly_with_value(const char *instr, int value) {
+    printf("%s %d\n", instr, value);
+    fprintf(outfile, "%s %d\n", instr, value);
+}
+
+void declare_variable(const char *name) {
+    char buffer[50];
+    sprintf(buffer, "%s dd 0", name);
+    fprintf(outfile, "section .data\n%s\nsection .text\n", buffer);
+}
+
+void generate_print_code(const char *varname) {
+    char buffer[100];
+    sprintf(buffer, "mov eax, [%s] \npush eax\npush dword fmt\n", varname);
+    print_assembly(buffer);
+    print_assembly("call print_eax");
 }

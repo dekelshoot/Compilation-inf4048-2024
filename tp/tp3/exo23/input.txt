@@ -1,0 +1,10 @@
+a = 0;
+read b;
+read c;
+while(a < c)
+do
+    a = a + b;
+    if(a!=2) then
+        print a;
+    fi
+done
