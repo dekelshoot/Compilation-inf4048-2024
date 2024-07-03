@@ -71,7 +71,7 @@ Grammaire
    44 sino: NDEYA
 
    45 cond: LPAREN F DZAM_DEUH F RPAREN
-   46     | LPAREN F NEQ F RPAREN
+   46     | LPAREN F ASSEULEN F RPAREN
    47     | LPAREN F ABOITE F RPAREN
    48     | LPAREN F ABUI F RPAREN
 
@@ -109,7 +109,7 @@ Terminaux, suivis des règles où ils apparaissent
     ANOAN (275) 11 14 16
     SEMI (276) 9 10
     DZAM_DEUH (277) 45
-    NEQ (278) 46
+    ASSEULEN (278) 46
     ABOITE (279) 47
     ABUI (280) 48
     LPAREN (281) 45 46 47 48
@@ -384,7 +384,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 État 19
 
    45 cond: LPAREN • F DZAM_DEUH F RPAREN
-   46     | LPAREN • F NEQ F RPAREN
+   46     | LPAREN • F ASSEULEN F RPAREN
    47     | LPAREN • F ABOITE F RPAREN
    48     | LPAREN • F ABUI F RPAREN
 
@@ -532,12 +532,12 @@ Non-terminaux, suivis des règles où ils apparaissent
 État 34
 
    45 cond: LPAREN F • DZAM_DEUH F RPAREN
-   46     | LPAREN F • NEQ F RPAREN
+   46     | LPAREN F • ASSEULEN F RPAREN
    47     | LPAREN F • ABOITE F RPAREN
    48     | LPAREN F • ABUI F RPAREN
 
     DZAM_DEUH  décalage et aller à l'état 49
-    NEQ        décalage et aller à l'état 50
+    ASSEULEN   décalage et aller à l'état 50
     ABOITE     décalage et aller à l'état 51
     ABUI       décalage et aller à l'état 52
 
@@ -672,7 +672,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 50
 
-   46 cond: LPAREN F NEQ • F RPAREN
+   46 cond: LPAREN F ASSEULEN • F RPAREN
 
     INTEGER   décalage et aller à l'état 28
     VARIABLE  décalage et aller à l'état 29
@@ -779,7 +779,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 61
 
-   46 cond: LPAREN F NEQ F • RPAREN
+   46 cond: LPAREN F ASSEULEN F • RPAREN
 
     RPAREN  décalage et aller à l'état 74
 
@@ -906,7 +906,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 74
 
-   46 cond: LPAREN F NEQ F RPAREN •
+   46 cond: LPAREN F ASSEULEN F RPAREN •
 
     $défaut  réduction par utilisation de la règle 46 (cond)
 

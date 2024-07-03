@@ -5,7 +5,7 @@ nasm -f elf -o asm.o davm.asm
 ld -s -o asm asm.o -melf_i386 -I/lib/ld-linux.so.2 -lc
 
 chmod +x davm
-cat commande.mes | ./davm
+cat commande.davm | ./davm
 
 chmod +x asm
 ./asm

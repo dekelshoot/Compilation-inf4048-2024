@@ -74,7 +74,7 @@ extern int yydebug;
     ANOAN = 275,                   /* ANOAN  */
     SEMI = 276,                    /* SEMI  */
     DZAM_DEUH = 277,               /* DZAM_DEUH  */
-    NEQ = 278,                     /* NEQ  */
+    ASSEULEN = 278,                /* ASSEULEN  */
     ABOITE = 279,                  /* ABOITE  */
     ABUI = 280,                    /* ABUI  */
     LPAREN = 281,                  /* LPAREN  */

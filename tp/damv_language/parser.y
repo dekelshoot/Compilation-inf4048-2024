@@ -91,7 +91,7 @@ int pop() {
 %token ANOAN
 %token SEMI
 %token DZAM_DEUH
-%token NEQ
+%token ASSEULEN
 %token ABOITE
 %token ABUI
 %token LPAREN
@@ -242,7 +242,7 @@ cond:
         cmpEgal = ";Teste d'égalité\n";
         fprintf(yyout, "%s%sjne test%d\npush 1\njmp fintest%d \ntest%d:\npush 0\nfintest%d:\n\n\n", cmpEgal, cmp, compteurTest, compteurTest, compteurTest, compteurTest);
     }
-    | LPAREN F NEQ F RPAREN
+    | LPAREN F ASSEULEN F RPAREN
     {
         compteurTest++;
         cmpDifferent = ";Teste de différence\n";

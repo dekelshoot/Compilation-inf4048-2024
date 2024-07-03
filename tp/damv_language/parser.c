@@ -191,7 +191,7 @@ enum yysymbol_kind_t
   YYSYMBOL_ANOAN = 20,                     /* ANOAN  */
   YYSYMBOL_SEMI = 21,                      /* SEMI  */
   YYSYMBOL_DZAM_DEUH = 22,                 /* DZAM_DEUH  */
-  YYSYMBOL_NEQ = 23,                       /* NEQ  */
+  YYSYMBOL_ASSEULEN = 23,                  /* ASSEULEN  */
   YYSYMBOL_ABOITE = 24,                    /* ABOITE  */
   YYSYMBOL_ABUI = 25,                      /* ABUI  */
   YYSYMBOL_LPAREN = 26,                    /* LPAREN  */
@@ -634,7 +634,7 @@ static const char *const yytname[] =
   "\"end of file\"", "error", "\"invalid token\"", "INTEGER", "ABAH",
   "VARIABLE", "NGE", "NDO", "NDEYA", "AMANNGE", "LAN", "NTIETE", "AMAN",
   "BO", "ASU", "YA", "ITIE", "AMANASU", "AKOK_LO", "MUL", "ANOAN", "SEMI",
-  "DZAM_DEUH", "NEQ", "ABOITE", "ABUI", "LPAREN", "RPAREN", "$accept",
+  "DZAM_DEUH", "ASSEULEN", "ABOITE", "ABUI", "LPAREN", "RPAREN", "$accept",
   "Program", "program_body", "stat", "bloc", "instr", "blocFor", "$@1",
   "blocIntFor", "blocDoWhile", "$@2", "blocIntDoWhile", "blocWhile",
   "blocIntWhile", "etiquetWhile", "LOOP", "exp_bool", "ENDWHILE", "blocSi",
@@ -1397,7 +1397,7 @@ yyreduce:
 #line 1398 "parser.c"
     break;
 
-  case 47: /* cond: LPAREN F NEQ F RPAREN  */
+  case 47: /* cond: LPAREN F ASSEULEN F RPAREN  */
 #line 246 "parser.y"
     {
         compteurTest++;

@@ -9,19 +9,18 @@ lparen \(
 rparen \)
 
 point_virgule \;
-non_egal \!\=
 variable [a-d]
 
 %%
 {entier} { yylval=atoi(yytext);return INTEGER;}
 {multiplication} {return MUL;}
 {point_virgule} {return SEMI;}
-{non_egal} {return NEQ;}
 {lparen} {return LPAREN;}
 {rparen} {return RPAREN;}
 {variable}  {yylval=*yytext; return VARIABLE;}
 akok_lo {return AKOK_LO;}
 anoan {return ANOAN;}
+asseulen {return ASSEULEN;}
 dzam_deuh {return DZAM_DEUH;}
 abah {return ABAH;}
 aboite {return ABOITE;}

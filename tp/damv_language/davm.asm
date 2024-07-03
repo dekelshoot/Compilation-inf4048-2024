@@ -13,19 +13,55 @@ global _start
 _start:
 
 push 0
+ ;affectation
+pop eax
+mov [a], eax
+
+push 10
+ ;affectation
+pop eax
+mov [d], eax
+
+push 0
 push 5
 push 1
 ;*************** Boucle for***** ****
-mov dword [a], 0
+mov dword [b], 0
 debutFor1:
-mov eax, [a]
+mov eax, [b]
 cmp eax, 5
 jg finFor1
 ; code du bloc
+push 0
+push 2
+push 1
+;*************** Boucle for***** ****
+mov dword [c], 0
+debutFor2:
+mov eax, [c]
+cmp eax, 2
+jg finFor2
+; code du bloc
+;afficher
+mov eax, [d] 
+push eax
+push dword fmt
+call printf
+
+add dword [c], 1
+jmp debutFor2
+finFor2:
  ;recuperation en memoire
 mov eax, [a] 
 push eax
- ;affectation
+push 1
+ ; addition
+pop eax
+pop ebx
+add eax,ebx
+push eax
+
+  ;affectation
 pop eax
 mov [a], eax
 
@@ -35,7 +71,7 @@ push eax
 push dword fmt
 call printf
 
-add dword [a], 1
+add dword [b], 1
 jmp debutFor1
 finFor1:
 mov eax,1 ; sys_exit 
