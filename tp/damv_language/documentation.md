@@ -28,10 +28,10 @@ le code ci(do while):
 
 ```C
 
-a----->0;
-c----->6;
+a=0;
+c=6;
 do
-a----->a+1;
+a=a+1;
 print a;
 while(a < c)
 done
@@ -56,7 +56,7 @@ le code ci (for):
 
 ```C
 
-for a -----> 0 to 5 step 1
+for a = 0 to 5 step 1
 do
   print a;
 endfor
@@ -79,8 +79,8 @@ Le code ci: (if else)
 
 ```C
 
-a -----> 10;
-b -----> 20;
+a = 10;
+b = 20;
 si (a < b) alors
     print a;
 sinon
@@ -108,17 +108,17 @@ Le code ci(tanque et if):
 
 ```C
 
-if(a!----->2) then
+if(a!=2) then
     print a;
   fi
-a -----> 0;
+a = 0;
 
 read b;
 read c;
 
 while(a < c)
 do
-  a -----> a + b;
+  a = a + b;
 
   if(a!----->2) then
     print a;
@@ -154,16 +154,16 @@ Le code ci(for imbriqué):
 
 ```C
 
-a----->0;
-d-----> 10;
-for b -----> 0 to 5 step 1
+a=0;
+d= 10;
+for b =0 to 5 step 1
 do
-  for c -----> 0 to 2 step 1
+  for c = 0 to 2 step 1
   do
     print d;
   endfor
 
-  a -----> a + 1;
+  a = a + 1;
   print a;
 endfor
 ```
