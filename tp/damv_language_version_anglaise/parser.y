@@ -6,7 +6,7 @@
 
 #define MAX_DO_WHILE 100  // Taille maximale de la pile des boucles do...while
 
-int compteurSi = 0, compteurTest = 0, compteurWhile = 0, compteurFor = 0 ,topDoWhile = 0, compteurSwitch = 0;
+int compteurSi = 0, compteurTest = 0, compteurWhile = 0, compteurFor = 0 ,topDoWhile = 0;
 extern FILE *yyout;
 
 // Stack to handle nested for loop labels
@@ -19,7 +19,6 @@ int doWhileLabels[MAX_DO_WHILE];  // Tableau pour stocker les étiquettes de bou
 char *header = "extern printf,scanf \nsection .data\n; declaration des variables en memoire\na:  dd  0\nb:  dd  0\nc:  dd  0\nd:  dd  0\nfmt:db \"%d\", 10, 0 \nfmtlec:db \"%d\",0\nsection .text\nglobal _start\n\n_start:\n\n";
 char *trailer = "mov eax,1 ; sys_exit \nmov ebx,0; Exit with return code of 0 (no error)\nint 80h";
 char *add = " ; addition\npop eax\npop ebx\nadd eax,ebx\npush eax\n\n";
-char *sub = " ; soustraction\npop eax\npop ebx\nsub eax,ebx\npush eax\n\n";
 char *mul = " ;multiplication\npop eax\npop ebx\nmul ebx\npush eax\n\n";
 char *affec = " ;affectation\npop eax\nmov";
 char *take = " ;recuperation en memoire\nmov eax,";
@@ -73,37 +72,31 @@ int pop() {
 %}
 
 %token INTEGER
-%token ABAH
+%token PRINT
 %token VARIABLE
-%token NGE
-%token NDO
-%token NDEYA
-%token AMANNGE
-%token LAN
-%token NTIETE
-%token AMAN
-%token BO
-%token ASU
-%token DOUBLEMARK
-%token YA
-%token ITIE
-%token AMANASU
-%token AKOK_LO
-%token A_POULI
-%token ANOAN
+%token SI
+%token ALORS
+%token SINON
+%token FSI
+%token FSIN
+%token READ
+%token WHILE
+%token DONE
+%token DO
+%token FOR
+%token TO
+%token STEP
+%token ENDFOR
+%token ADD
+%token MUL
+%token EQUAL
 %token SEMI
-%token DZAM_DEUH
-%token ASSEULEN
-%token ABOITE
-%token ABUI
+%token EQEQ
+%token NEQ
+%token LT
+%token GT
 %token LPAREN
 %token RPAREN
-%token SWITCH
-%token BREAK
-%token ENDSWITCH
-%token CASE
-%token FINCASE
-%token AVAH
 
 %%
 Program:
@@ -119,47 +112,19 @@ stat:
     | blocWhile
     | blocFor
 	| blocDoWhile
-    | blocSwitch
 
 bloc:
     instr SEMI
     | instr SEMI bloc
 
 instr:
-    VARIABLE ANOAN E { fprintf(yyout, "%s [%c], eax\n\n", affec, $1); }
-    | ABAH VARIABLE { fprintf(yyout, "%s [%c] %s", afficher1, $2, afficher2); }
-    | LAN VARIABLE { fprintf(yyout, "%s %c %s", lire1, $2, lire2); }
-    | VARIABLE ANOAN cond { fprintf(yyout, "%s [%c], eax\n\n", affec, $1); }
-
-blocSwitch:
-    SWITCH exp debutSwitch listeCase ENDSWITCH { fprintf(yyout, "finSwitch%d:\n", compteurSwitch); compteurSwitch++; }
-
-debutSwitch:
-    { 
-        compteurSwitch++;
-        fprintf(yyout, "debutSwitch%d:\n", compteurSwitch); 
-    }
-
-listeCase:
-    CASE INTEGER DOUBLEMARK stat_list case_break listeCase
-    | CASE INTEGER DOUBLEMARK stat_list case_break
-    | 
-
-case_break:
-    BREAK { fprintf(yyout, "jmp finSwitch%d\n", compteurSwitch); }
-    | 
-
-stat_list:
-    stat
-    | stat stat_list
-
-exp:
-    E { fprintf(yyout, "pop eax\n"); }
-    | VARIABLE { fprintf(yyout, "mov eax, [%c]\n", $1); }
-
+    VARIABLE EQUAL E { fprintf(yyout, "%s [%c], eax\n\n", affec, $1); }
+    | PRINT VARIABLE { fprintf(yyout, "%s [%c] %s", afficher1, $2, afficher2); }
+    | READ VARIABLE { fprintf(yyout, "%s %c %s", lire1, $2, lire2); }
+    | VARIABLE EQUAL cond { fprintf(yyout, "%s [%c], eax\n\n", affec, $1); }
 
 blocFor:
-    ASU VARIABLE ANOAN E YA E ITIE E BO 
+    FOR VARIABLE EQUAL E TO E STEP E DO 
     {
         compteurFor++;
 		fprintf(yyout, ";*************** Boucle for***** ****\n");
@@ -169,7 +134,7 @@ blocFor:
         fprintf(yyout, "; code du bloc\n");
         push(compteurFor);
     }
-	blocIntFor AMANASU
+	blocIntFor ENDFOR
     {
         int forLabel = pop();
         fprintf(yyout, "add dword [%c], %d\njmp debutFor%d\nfinFor%d:\n", $2, $8, forLabel, forLabel); // incrémentation et fin
@@ -184,15 +149,14 @@ blocIntFor:
     | blocSi blocIntFor
     | bloc blocIntFor
 
-
 blocDoWhile:
-	BO
+	DO
     {
         compteurWhile++;
         fprintf(yyout, ";********Lieu de l'étiquete\n");
         fprintf(yyout, "debutWhile%d:\n", compteurWhile);
     }
-    blocIntDoWhile NTIETE exp_bool ENDWHILE
+    blocIntDoWhile WHILE exp_bool ENDWHILE
 
 
 blocIntDoWhile:
@@ -204,7 +168,7 @@ blocIntDoWhile:
 
 	
 blocWhile:
-    NTIETE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE { fprintf(yyout, ";*************** ***** ****Réduction du bloc while\n"); }
+    WHILE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE { fprintf(yyout, ";*************** ***** ****Réduction du bloc while\n"); }
 
 blocIntWhile:
     bloc
@@ -220,7 +184,7 @@ etiquetWhile:
     }
 
 LOOP:
-    BO { fprintf(yyout, ";*************** ***** ****Réduction du do\n"); }
+    DO { fprintf(yyout, ";*************** ***** ****Réduction du do\n"); }
 
 exp_bool:
     cond
@@ -230,18 +194,18 @@ exp_bool:
     }
 
 ENDWHILE:
-    AMAN
+    DONE
     {
         fprintf(yyout, ";*************** ***** ****Réduction du done\n");
         fprintf(yyout, "jmp debutWhile%d\nfinWhile%d:\n", compteurWhile, compteurWhile);
     }
 
 blocSi:
-    NGE cond alo bloc finSi
-    | NGE cond alo bloc sino bloc finSi { fprintf(yyout, ";Condition detectée 2\n"); }
+    SI cond alo bloc finSi
+    | SI cond alo bloc sino bloc finSi { fprintf(yyout, ";Condition detectée 2\n"); }
 
 finSi:
-    AMANNGE
+    FSI
     {
         if (sinonVu)
         {
@@ -257,7 +221,7 @@ finSi:
     }
 
 alo:
-    NDO
+    ALORS
     {
         compteurSi++;
         fprintf(yyout, ";Réduction du alors%d\n", compteurSi);
@@ -265,7 +229,7 @@ alo:
     }
 
 sino:
-    NDEYA
+    SINON
     {
         fprintf(yyout, "jmp suite%d\nsinon%d:\n", compteurSi, compteurSi);
         fprintf(yyout, ";Réduction du sinon%d\n", compteurSi);
@@ -273,25 +237,25 @@ sino:
     }
 
 cond:
-    LPAREN F DZAM_DEUH F RPAREN
+    LPAREN F EQEQ F RPAREN
     {
         compteurTest++;
         cmpEgal = ";Teste d'égalité\n";
         fprintf(yyout, "%s%sjne test%d\npush 1\njmp fintest%d \ntest%d:\npush 0\nfintest%d:\n\n\n", cmpEgal, cmp, compteurTest, compteurTest, compteurTest, compteurTest);
     }
-    | LPAREN F ASSEULEN F RPAREN
+    | LPAREN F NEQ F RPAREN
     {
         compteurTest++;
         cmpDifferent = ";Teste de différence\n";
         fprintf(yyout, "%s%sjne test%d\npush 0\njmp fintest%d \ntest%d:\npush 1\nfintest%d:\n\n\n", cmpDifferent, cmp, compteurTest, compteurTest, compteurTest, compteurTest);
     }
-    | LPAREN F ABOITE F RPAREN
+    | LPAREN F LT F RPAREN
     {
         compteurTest++;
         cmpInferieur = ";Teste d'infériorité\n";
         fprintf(yyout, "%s%sjge test%d\npush 1\njmp fintest%d \ntest%d:\npush 0\nfintest%d:\n\n\n", cmpInferieur, cmp, compteurTest, compteurTest, compteurTest, compteurTest);
     }
-    | LPAREN F ABUI F RPAREN
+    | LPAREN F GT F RPAREN
     {
         compteurTest++;
         cmpSuperieur = ";Teste de superiorité\n";
@@ -300,12 +264,11 @@ cond:
 
 E:
     T
-    | E AKOK_LO T { fprintf(yyout, "%s ", add); }
-    | E AVAH T { fprintf(yyout, "%s ", sub); }
+    | E ADD T { fprintf(yyout, "%s ", add); }
 
 T:
     F
-    | T A_POULI F { fprintf(yyout, "%s ", mul); }
+    | T MUL F { fprintf(yyout, "%s ", mul); }
 
 F:
     INTEGER { fprintf(yyout, "push %d\n", $1); }

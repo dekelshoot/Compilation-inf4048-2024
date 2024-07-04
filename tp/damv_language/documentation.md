@@ -9,6 +9,8 @@
 - to -----> ya
 - endfor -----> aman_asu
 - "+" -----> akok_lo
+- "\*" -----> a_pouli
+- "-" -----> a_vah
 - = -----> anoan
 - == -----> Dzam_deuh
 - != -----> asseulen
@@ -94,7 +96,7 @@ devient:
 
 a anoan 10;
 b anoan 20;
-nge (a abui b) ndo
+nge (a aboite b) ndo
     abah a;
 nde_ya
     abah b;
@@ -184,4 +186,55 @@ bo
   a anoan a akok_lo 1;
   abah a;
 aman_asu
+```
+
+### condition switch case
+
+le code ci
+
+```C
+
+a=10;
+switch a
+case 10:
+  a=a+2;
+  print a;
+break
+
+case 2:
+  a=a+2;
+  print a;
+break
+
+case 11:
+  a=a+3;
+  print a;
+break
+
+endswitch
+```
+
+devient:
+
+```C
+a anoan 10;
+
+switch a
+
+case 10 :
+a anoan a akok_lo 2;
+abah a;
+break
+
+case 2 :
+a anoan a akok_lo 2;
+abah a;
+break
+
+case 11 :
+a anoan a akok_lo 3;
+abah a;
+break
+
+endswitch
 ```

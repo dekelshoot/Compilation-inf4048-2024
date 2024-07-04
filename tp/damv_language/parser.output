@@ -1,4 +1,11 @@
-État 27 conflits: 3 décalage/réduction
+Terminaux inutilisés dans la grammaire
+
+    FINCASE
+
+
+État 28 conflits: 2 réduction/réduction
+État 35 conflits: 3 décalage/réduction
+État 104 conflits: 1 réduction/réduction
 
 
 Grammaire
@@ -15,186 +22,230 @@ Grammaire
     6     | blocWhile
     7     | blocFor
     8     | blocDoWhile
+    9     | blocSwitch
 
-    9 bloc: instr SEMI
-   10     | instr SEMI bloc
+   10 bloc: instr SEMI
+   11     | instr SEMI bloc
 
-   11 instr: VARIABLE ANOAN E
-   12      | ABAH VARIABLE
-   13      | LAN VARIABLE
-   14      | VARIABLE ANOAN cond
+   12 instr: VARIABLE ANOAN E
+   13      | ABAH VARIABLE
+   14      | LAN VARIABLE
+   15      | VARIABLE ANOAN cond
 
-   15 $@1: ε
+   16 blocSwitch: SWITCH exp debutSwitch listeCase ENDSWITCH
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
+   17 debutSwitch: ε
 
-   17 blocIntFor: bloc
-   18           | blocSi
-   19           | blocWhile
-   20           | blocFor
-   21           | blocFor bloc
-   22           | blocSi blocIntFor
-   23           | bloc blocIntFor
+   18 listeCase: CASE INTEGER DOUBLEMARK stat_list case_break listeCase
+   19          | CASE INTEGER DOUBLEMARK stat_list case_break
+   20          | ε
 
-   24 $@2: ε
+   21 case_break: BREAK
+   22           | ε
 
-   25 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE
+   23 stat_list: stat
+   24          | stat stat_list
 
-   26 blocIntDoWhile: bloc
-   27               | blocSi
-   28               | blocFor
-   29               | blocWhile
-   30               | blocDoWhile
+   25 exp: E
+   26    | VARIABLE
 
-   31 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE
+   27 $@1: ε
 
-   32 blocIntWhile: bloc
-   33             | blocSi
-   34             | blocSi blocIntWhile
-   35             | bloc blocIntWhile
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
 
-   36 etiquetWhile: ε
+   29 blocIntFor: bloc
+   30           | blocSi
+   31           | blocWhile
+   32           | blocFor
+   33           | blocFor bloc
+   34           | blocSi blocIntFor
+   35           | bloc blocIntFor
 
-   37 LOOP: BO
+   36 $@2: ε
 
-   38 exp_bool: cond
+   37 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE
 
-   39 ENDWHILE: AMAN
+   38 blocIntDoWhile: bloc
+   39               | blocSi
+   40               | blocFor
+   41               | blocWhile
+   42               | blocDoWhile
 
-   40 blocSi: NGE cond alo bloc finSi
-   41       | NGE cond alo bloc sino bloc finSi
+   43 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE
 
-   42 finSi: AMANNGE
+   44 blocIntWhile: bloc
+   45             | blocSi
+   46             | blocSi blocIntWhile
+   47             | bloc blocIntWhile
 
-   43 alo: NDO
+   48 etiquetWhile: ε
 
-   44 sino: NDEYA
+   49 LOOP: BO
 
-   45 cond: LPAREN F DZAM_DEUH F RPAREN
-   46     | LPAREN F ASSEULEN F RPAREN
-   47     | LPAREN F ABOITE F RPAREN
-   48     | LPAREN F ABUI F RPAREN
+   50 exp_bool: cond
 
-   49 E: T
-   50  | E AKOK_LO T
+   51 ENDWHILE: AMAN
 
-   51 T: F
-   52  | T MUL F
+   52 blocSi: NGE cond alo bloc finSi
+   53       | NGE cond alo bloc sino bloc finSi
 
-   53 F: INTEGER
-   54  | VARIABLE
+   54 finSi: AMANNGE
+
+   55 alo: NDO
+
+   56 sino: NDEYA
+
+   57 cond: LPAREN F DZAM_DEUH F RPAREN
+   58     | LPAREN F ASSEULEN F RPAREN
+   59     | LPAREN F ABOITE F RPAREN
+   60     | LPAREN F ABUI F RPAREN
+
+   61 E: T
+   62  | E AKOK_LO T
+   63  | E AVAH T
+
+   64 T: F
+   65  | T A_POULI F
+
+   66 F: INTEGER
+   67  | VARIABLE
 
 
 Terminaux, suivis des règles où ils apparaissent
 
     $end (0) 0
     error (256)
-    INTEGER (258) 53
-    ABAH (259) 12
-    VARIABLE (260) 11 12 13 14 16 54
-    NGE (261) 40 41
-    NDO (262) 43
-    NDEYA (263) 44
-    AMANNGE (264) 42
-    LAN (265) 13
-    NTIETE (266) 25 31
-    AMAN (267) 39
-    BO (268) 16 25 37
-    ASU (269) 16
-    YA (270) 16
-    ITIE (271) 16
-    AMANASU (272) 16
-    AKOK_LO (273) 50
-    MUL (274) 52
-    ANOAN (275) 11 14 16
-    SEMI (276) 9 10
-    DZAM_DEUH (277) 45
-    ASSEULEN (278) 46
-    ABOITE (279) 47
-    ABUI (280) 48
-    LPAREN (281) 45 46 47 48
-    RPAREN (282) 45 46 47 48
+    INTEGER (258) 18 19 66
+    ABAH (259) 13
+    VARIABLE (260) 12 13 14 15 26 28 67
+    NGE (261) 52 53
+    NDO (262) 55
+    NDEYA (263) 56
+    AMANNGE (264) 54
+    LAN (265) 14
+    NTIETE (266) 37 43
+    AMAN (267) 51
+    BO (268) 28 37 49
+    ASU (269) 28
+    DOUBLEMARK (270) 18 19
+    YA (271) 28
+    ITIE (272) 28
+    AMANASU (273) 28
+    AKOK_LO (274) 62
+    A_POULI (275) 65
+    ANOAN (276) 12 15 28
+    SEMI (277) 10 11
+    DZAM_DEUH (278) 57
+    ASSEULEN (279) 58
+    ABOITE (280) 59
+    ABUI (281) 60
+    LPAREN (282) 57 58 59 60
+    RPAREN (283) 57 58 59 60
+    SWITCH (284) 16
+    BREAK (285) 21
+    ENDSWITCH (286) 16
+    CASE (287) 18 19
+    FINCASE (288)
+    AVAH (289) 63
 
 
 Non-terminaux, suivis des règles où ils apparaissent
 
-    $accept (28)
+    $accept (35)
         à gauche: 0
-    Program (29)
+    Program (36)
         à gauche: 1
         à droite: 0
-    program_body (30)
+    program_body (37)
         à gauche: 2 3
         à droite: 1 3
-    stat (31)
-        à gauche: 4 5 6 7 8
-        à droite: 2 3
-    bloc (32)
-        à gauche: 9 10
-        à droite: 4 10 17 21 23 26 32 35 40 41
-    instr (33)
-        à gauche: 11 12 13 14
-        à droite: 9 10
-    blocFor (34)
+    stat (38)
+        à gauche: 4 5 6 7 8 9
+        à droite: 2 3 23 24
+    bloc (39)
+        à gauche: 10 11
+        à droite: 4 11 29 33 35 38 44 47 52 53
+    instr (40)
+        à gauche: 12 13 14 15
+        à droite: 10 11
+    blocSwitch (41)
         à gauche: 16
-        à droite: 7 20 21 28
-    $@1 (35)
-        à gauche: 15
+        à droite: 9
+    debutSwitch (42)
+        à gauche: 17
         à droite: 16
-    blocIntFor (36)
-        à gauche: 17 18 19 20 21 22 23
-        à droite: 16 22 23
-    blocDoWhile (37)
-        à gauche: 25
-        à droite: 8 30
-    $@2 (38)
-        à gauche: 24
-        à droite: 25
-    blocIntDoWhile (39)
-        à gauche: 26 27 28 29 30
-        à droite: 25
-    blocWhile (40)
-        à gauche: 31
-        à droite: 6 19 29
-    blocIntWhile (41)
-        à gauche: 32 33 34 35
-        à droite: 31 34 35
-    etiquetWhile (42)
-        à gauche: 36
-        à droite: 31
-    LOOP (43)
+    listeCase (43)
+        à gauche: 18 19 20
+        à droite: 16 18
+    case_break (44)
+        à gauche: 21 22
+        à droite: 18 19
+    stat_list (45)
+        à gauche: 23 24
+        à droite: 18 19 24
+    exp (46)
+        à gauche: 25 26
+        à droite: 16
+    blocFor (47)
+        à gauche: 28
+        à droite: 7 32 33 40
+    $@1 (48)
+        à gauche: 27
+        à droite: 28
+    blocIntFor (49)
+        à gauche: 29 30 31 32 33 34 35
+        à droite: 28 34 35
+    blocDoWhile (50)
         à gauche: 37
-        à droite: 31
-    exp_bool (44)
-        à gauche: 38
-        à droite: 25 31
-    ENDWHILE (45)
-        à gauche: 39
-        à droite: 25 31
-    blocSi (46)
-        à gauche: 40 41
-        à droite: 5 18 22 27 33 34
-    finSi (47)
-        à gauche: 42
-        à droite: 40 41
-    alo (48)
+        à droite: 8 42
+    $@2 (51)
+        à gauche: 36
+        à droite: 37
+    blocIntDoWhile (52)
+        à gauche: 38 39 40 41 42
+        à droite: 37
+    blocWhile (53)
         à gauche: 43
-        à droite: 40 41
-    sino (49)
-        à gauche: 44
-        à droite: 41
-    cond (50)
-        à gauche: 45 46 47 48
-        à droite: 14 38 40 41
-    E (51)
-        à gauche: 49 50
-        à droite: 11 16 50
-    T (52)
-        à gauche: 51 52
-        à droite: 49 50 52
-    F (53)
-        à gauche: 53 54
-        à droite: 45 46 47 48 51 52
+        à droite: 6 31 41
+    blocIntWhile (54)
+        à gauche: 44 45 46 47
+        à droite: 43 46 47
+    etiquetWhile (55)
+        à gauche: 48
+        à droite: 43
+    LOOP (56)
+        à gauche: 49
+        à droite: 43
+    exp_bool (57)
+        à gauche: 50
+        à droite: 37 43
+    ENDWHILE (58)
+        à gauche: 51
+        à droite: 37 43
+    blocSi (59)
+        à gauche: 52 53
+        à droite: 5 30 34 39 45 46
+    finSi (60)
+        à gauche: 54
+        à droite: 52 53
+    alo (61)
+        à gauche: 55
+        à droite: 52 53
+    sino (62)
+        à gauche: 56
+        à droite: 53
+    cond (63)
+        à gauche: 57 58 59 60
+        à droite: 15 50 52 53
+    E (64)
+        à gauche: 61 62 63
+        à droite: 12 25 28 62 63
+    T (65)
+        à gauche: 64 65
+        à droite: 61 62 63 65
+    F (66)
+        à gauche: 66 67
+        à droite: 57 58 59 60 64 65
 
 
 État 0
@@ -208,90 +259,105 @@ Non-terminaux, suivis des règles où ils apparaissent
     NTIETE    décalage et aller à l'état 5
     BO        décalage et aller à l'état 6
     ASU       décalage et aller à l'état 7
+    SWITCH    décalage et aller à l'état 8
 
-    Program       aller à l'état 8
-    program_body  aller à l'état 9
-    stat          aller à l'état 10
-    bloc          aller à l'état 11
-    instr         aller à l'état 12
-    blocFor       aller à l'état 13
-    blocDoWhile   aller à l'état 14
-    blocWhile     aller à l'état 15
-    blocSi        aller à l'état 16
+    Program       aller à l'état 9
+    program_body  aller à l'état 10
+    stat          aller à l'état 11
+    bloc          aller à l'état 12
+    instr         aller à l'état 13
+    blocSwitch    aller à l'état 14
+    blocFor       aller à l'état 15
+    blocDoWhile   aller à l'état 16
+    blocWhile     aller à l'état 17
+    blocSi        aller à l'état 18
 
 
 État 1
 
-   12 instr: ABAH • VARIABLE
+   13 instr: ABAH • VARIABLE
 
-    VARIABLE  décalage et aller à l'état 17
+    VARIABLE  décalage et aller à l'état 19
 
 
 État 2
 
-   11 instr: VARIABLE • ANOAN E
-   14      | VARIABLE • ANOAN cond
+   12 instr: VARIABLE • ANOAN E
+   15      | VARIABLE • ANOAN cond
 
-    ANOAN  décalage et aller à l'état 18
+    ANOAN  décalage et aller à l'état 20
 
 
 État 3
 
-   40 blocSi: NGE • cond alo bloc finSi
-   41       | NGE • cond alo bloc sino bloc finSi
+   52 blocSi: NGE • cond alo bloc finSi
+   53       | NGE • cond alo bloc sino bloc finSi
 
-    LPAREN  décalage et aller à l'état 19
+    LPAREN  décalage et aller à l'état 21
 
-    cond  aller à l'état 20
+    cond  aller à l'état 22
 
 
 État 4
 
-   13 instr: LAN • VARIABLE
+   14 instr: LAN • VARIABLE
 
-    VARIABLE  décalage et aller à l'état 21
+    VARIABLE  décalage et aller à l'état 23
 
 
 État 5
 
-   31 blocWhile: NTIETE • etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE
+   43 blocWhile: NTIETE • etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE
 
-    $défaut  réduction par utilisation de la règle 36 (etiquetWhile)
+    $défaut  réduction par utilisation de la règle 48 (etiquetWhile)
 
-    etiquetWhile  aller à l'état 22
+    etiquetWhile  aller à l'état 24
 
 
 État 6
 
-   25 blocDoWhile: BO • $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE
+   37 blocDoWhile: BO • $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE
 
-    $défaut  réduction par utilisation de la règle 24 ($@2)
+    $défaut  réduction par utilisation de la règle 36 ($@2)
 
-    $@2  aller à l'état 23
+    $@2  aller à l'état 25
 
 
 État 7
 
-   16 blocFor: ASU • VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
+   28 blocFor: ASU • VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
 
-    VARIABLE  décalage et aller à l'état 24
+    VARIABLE  décalage et aller à l'état 26
 
 
 État 8
 
-    0 $accept: Program • $end
+   16 blocSwitch: SWITCH • exp debutSwitch listeCase ENDSWITCH
 
-    $end  décalage et aller à l'état 25
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 28
+
+    exp  aller à l'état 29
+    E    aller à l'état 30
+    T    aller à l'état 31
+    F    aller à l'état 32
 
 
 État 9
+
+    0 $accept: Program • $end
+
+    $end  décalage et aller à l'état 33
+
+
+État 10
 
     1 Program: program_body •
 
     $défaut  réduction par utilisation de la règle 1 (Program)
 
 
-État 10
+État 11
 
     2 program_body: stat •
     3             | stat • program_body
@@ -303,127 +369,136 @@ Non-terminaux, suivis des règles où ils apparaissent
     NTIETE    décalage et aller à l'état 5
     BO        décalage et aller à l'état 6
     ASU       décalage et aller à l'état 7
+    SWITCH    décalage et aller à l'état 8
 
     $défaut  réduction par utilisation de la règle 2 (program_body)
 
-    program_body  aller à l'état 26
-    stat          aller à l'état 10
-    bloc          aller à l'état 11
-    instr         aller à l'état 12
-    blocFor       aller à l'état 13
-    blocDoWhile   aller à l'état 14
-    blocWhile     aller à l'état 15
-    blocSi        aller à l'état 16
+    program_body  aller à l'état 34
+    stat          aller à l'état 11
+    bloc          aller à l'état 12
+    instr         aller à l'état 13
+    blocSwitch    aller à l'état 14
+    blocFor       aller à l'état 15
+    blocDoWhile   aller à l'état 16
+    blocWhile     aller à l'état 17
+    blocSi        aller à l'état 18
 
 
-État 11
+État 12
 
     4 stat: bloc •
 
     $défaut  réduction par utilisation de la règle 4 (stat)
 
 
-État 12
-
-    9 bloc: instr • SEMI
-   10     | instr • SEMI bloc
-
-    SEMI  décalage et aller à l'état 27
-
-
 État 13
+
+   10 bloc: instr • SEMI
+   11     | instr • SEMI bloc
+
+    SEMI  décalage et aller à l'état 35
+
+
+État 14
+
+    9 stat: blocSwitch •
+
+    $défaut  réduction par utilisation de la règle 9 (stat)
+
+
+État 15
 
     7 stat: blocFor •
 
     $défaut  réduction par utilisation de la règle 7 (stat)
 
 
-État 14
+État 16
 
     8 stat: blocDoWhile •
 
     $défaut  réduction par utilisation de la règle 8 (stat)
 
 
-État 15
+État 17
 
     6 stat: blocWhile •
 
     $défaut  réduction par utilisation de la règle 6 (stat)
 
 
-État 16
+État 18
 
     5 stat: blocSi •
 
     $défaut  réduction par utilisation de la règle 5 (stat)
 
 
-État 17
-
-   12 instr: ABAH VARIABLE •
-
-    $défaut  réduction par utilisation de la règle 12 (instr)
-
-
-État 18
-
-   11 instr: VARIABLE ANOAN • E
-   14      | VARIABLE ANOAN • cond
-
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-    LPAREN    décalage et aller à l'état 19
-
-    cond  aller à l'état 30
-    E     aller à l'état 31
-    T     aller à l'état 32
-    F     aller à l'état 33
-
-
 État 19
 
-   45 cond: LPAREN • F DZAM_DEUH F RPAREN
-   46     | LPAREN • F ASSEULEN F RPAREN
-   47     | LPAREN • F ABOITE F RPAREN
-   48     | LPAREN • F ABUI F RPAREN
-
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    F  aller à l'état 34
-
-
-État 20
-
-   40 blocSi: NGE cond • alo bloc finSi
-   41       | NGE cond • alo bloc sino bloc finSi
-
-    NDO  décalage et aller à l'état 35
-
-    alo  aller à l'état 36
-
-
-État 21
-
-   13 instr: LAN VARIABLE •
+   13 instr: ABAH VARIABLE •
 
     $défaut  réduction par utilisation de la règle 13 (instr)
 
 
+État 20
+
+   12 instr: VARIABLE ANOAN • E
+   15      | VARIABLE ANOAN • cond
+
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+    LPAREN    décalage et aller à l'état 21
+
+    cond  aller à l'état 37
+    E     aller à l'état 38
+    T     aller à l'état 31
+    F     aller à l'état 32
+
+
+État 21
+
+   57 cond: LPAREN • F DZAM_DEUH F RPAREN
+   58     | LPAREN • F ASSEULEN F RPAREN
+   59     | LPAREN • F ABOITE F RPAREN
+   60     | LPAREN • F ABUI F RPAREN
+
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    F  aller à l'état 39
+
+
 État 22
 
-   31 blocWhile: NTIETE etiquetWhile • exp_bool LOOP blocIntWhile ENDWHILE
+   52 blocSi: NGE cond • alo bloc finSi
+   53       | NGE cond • alo bloc sino bloc finSi
 
-    LPAREN  décalage et aller à l'état 19
+    NDO  décalage et aller à l'état 40
 
-    exp_bool  aller à l'état 37
-    cond      aller à l'état 38
+    alo  aller à l'état 41
 
 
 État 23
 
-   25 blocDoWhile: BO $@2 • blocIntDoWhile NTIETE exp_bool ENDWHILE
+   14 instr: LAN VARIABLE •
+
+    $défaut  réduction par utilisation de la règle 14 (instr)
+
+
+État 24
+
+   43 blocWhile: NTIETE etiquetWhile • exp_bool LOOP blocIntWhile ENDWHILE
+
+    LPAREN  décalage et aller à l'état 21
+
+    exp_bool  aller à l'état 42
+    cond      aller à l'état 43
+
+
+État 25
+
+   37 blocDoWhile: BO $@2 • blocIntDoWhile NTIETE exp_bool ENDWHILE
 
     ABAH      décalage et aller à l'état 1
     VARIABLE  décalage et aller à l'état 2
@@ -433,662 +508,793 @@ Non-terminaux, suivis des règles où ils apparaissent
     BO        décalage et aller à l'état 6
     ASU       décalage et aller à l'état 7
 
-    bloc            aller à l'état 39
-    instr           aller à l'état 12
-    blocFor         aller à l'état 40
-    blocDoWhile     aller à l'état 41
-    blocIntDoWhile  aller à l'état 42
-    blocWhile       aller à l'état 43
-    blocSi          aller à l'état 44
+    bloc            aller à l'état 44
+    instr           aller à l'état 13
+    blocFor         aller à l'état 45
+    blocDoWhile     aller à l'état 46
+    blocIntDoWhile  aller à l'état 47
+    blocWhile       aller à l'état 48
+    blocSi          aller à l'état 49
 
 
-État 24
+État 26
 
-   16 blocFor: ASU VARIABLE • ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
+   28 blocFor: ASU VARIABLE • ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU
 
-    ANOAN  décalage et aller à l'état 45
+    ANOAN  décalage et aller à l'état 50
 
 
-État 25
+État 27
+
+   66 F: INTEGER •
+
+    $défaut  réduction par utilisation de la règle 66 (F)
+
+
+État 28
+
+   26 exp: VARIABLE •
+   67 F: VARIABLE •
+
+    ENDSWITCH  réduction par utilisation de la règle 26 (exp)
+    ENDSWITCH  [réduction par utilisation de la règle 67 (F)]
+    CASE       réduction par utilisation de la règle 26 (exp)
+    CASE       [réduction par utilisation de la règle 67 (F)]
+    $défaut    réduction par utilisation de la règle 67 (F)
+
+
+État 29
+
+   16 blocSwitch: SWITCH exp • debutSwitch listeCase ENDSWITCH
+
+    $défaut  réduction par utilisation de la règle 17 (debutSwitch)
+
+    debutSwitch  aller à l'état 51
+
+
+État 30
+
+   25 exp: E •
+   62 E: E • AKOK_LO T
+   63  | E • AVAH T
+
+    AKOK_LO  décalage et aller à l'état 52
+    AVAH     décalage et aller à l'état 53
+
+    $défaut  réduction par utilisation de la règle 25 (exp)
+
+
+État 31
+
+   61 E: T •
+   65 T: T • A_POULI F
+
+    A_POULI  décalage et aller à l'état 54
+
+    $défaut  réduction par utilisation de la règle 61 (E)
+
+
+État 32
+
+   64 T: F •
+
+    $défaut  réduction par utilisation de la règle 64 (T)
+
+
+État 33
 
     0 $accept: Program $end •
 
     $défaut  accepter
 
 
-État 26
+État 34
 
     3 program_body: stat program_body •
 
     $défaut  réduction par utilisation de la règle 3 (program_body)
 
 
-État 27
+État 35
 
-    9 bloc: instr SEMI •
-   10     | instr SEMI • bloc
+   10 bloc: instr SEMI •
+   11     | instr SEMI • bloc
 
     ABAH      décalage et aller à l'état 1
     VARIABLE  décalage et aller à l'état 2
     LAN       décalage et aller à l'état 4
 
-    ABAH      [réduction par utilisation de la règle 9 (bloc)]
-    VARIABLE  [réduction par utilisation de la règle 9 (bloc)]
-    LAN       [réduction par utilisation de la règle 9 (bloc)]
-    $défaut   réduction par utilisation de la règle 9 (bloc)
+    ABAH      [réduction par utilisation de la règle 10 (bloc)]
+    VARIABLE  [réduction par utilisation de la règle 10 (bloc)]
+    LAN       [réduction par utilisation de la règle 10 (bloc)]
+    $défaut   réduction par utilisation de la règle 10 (bloc)
 
-    bloc   aller à l'état 46
-    instr  aller à l'état 12
-
-
-État 28
-
-   53 F: INTEGER •
-
-    $défaut  réduction par utilisation de la règle 53 (F)
-
-
-État 29
-
-   54 F: VARIABLE •
-
-    $défaut  réduction par utilisation de la règle 54 (F)
-
-
-État 30
-
-   14 instr: VARIABLE ANOAN cond •
-
-    $défaut  réduction par utilisation de la règle 14 (instr)
-
-
-État 31
-
-   11 instr: VARIABLE ANOAN E •
-   50 E: E • AKOK_LO T
-
-    AKOK_LO  décalage et aller à l'état 47
-
-    $défaut  réduction par utilisation de la règle 11 (instr)
-
-
-État 32
-
-   49 E: T •
-   52 T: T • MUL F
-
-    MUL  décalage et aller à l'état 48
-
-    $défaut  réduction par utilisation de la règle 49 (E)
-
-
-État 33
-
-   51 T: F •
-
-    $défaut  réduction par utilisation de la règle 51 (T)
-
-
-État 34
-
-   45 cond: LPAREN F • DZAM_DEUH F RPAREN
-   46     | LPAREN F • ASSEULEN F RPAREN
-   47     | LPAREN F • ABOITE F RPAREN
-   48     | LPAREN F • ABUI F RPAREN
-
-    DZAM_DEUH  décalage et aller à l'état 49
-    ASSEULEN   décalage et aller à l'état 50
-    ABOITE     décalage et aller à l'état 51
-    ABUI       décalage et aller à l'état 52
-
-
-État 35
-
-   43 alo: NDO •
-
-    $défaut  réduction par utilisation de la règle 43 (alo)
+    bloc   aller à l'état 55
+    instr  aller à l'état 13
 
 
 État 36
 
-   40 blocSi: NGE cond alo • bloc finSi
-   41       | NGE cond alo • bloc sino bloc finSi
+   67 F: VARIABLE •
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    LAN       décalage et aller à l'état 4
-
-    bloc   aller à l'état 53
-    instr  aller à l'état 12
+    $défaut  réduction par utilisation de la règle 67 (F)
 
 
 État 37
 
-   31 blocWhile: NTIETE etiquetWhile exp_bool • LOOP blocIntWhile ENDWHILE
+   15 instr: VARIABLE ANOAN cond •
 
-    BO  décalage et aller à l'état 54
-
-    LOOP  aller à l'état 55
+    $défaut  réduction par utilisation de la règle 15 (instr)
 
 
 État 38
 
-   38 exp_bool: cond •
+   12 instr: VARIABLE ANOAN E •
+   62 E: E • AKOK_LO T
+   63  | E • AVAH T
 
-    $défaut  réduction par utilisation de la règle 38 (exp_bool)
+    AKOK_LO  décalage et aller à l'état 52
+    AVAH     décalage et aller à l'état 53
+
+    $défaut  réduction par utilisation de la règle 12 (instr)
 
 
 État 39
 
-   26 blocIntDoWhile: bloc •
+   57 cond: LPAREN F • DZAM_DEUH F RPAREN
+   58     | LPAREN F • ASSEULEN F RPAREN
+   59     | LPAREN F • ABOITE F RPAREN
+   60     | LPAREN F • ABUI F RPAREN
 
-    $défaut  réduction par utilisation de la règle 26 (blocIntDoWhile)
+    DZAM_DEUH  décalage et aller à l'état 56
+    ASSEULEN   décalage et aller à l'état 57
+    ABOITE     décalage et aller à l'état 58
+    ABUI       décalage et aller à l'état 59
 
 
 État 40
 
-   28 blocIntDoWhile: blocFor •
+   55 alo: NDO •
 
-    $défaut  réduction par utilisation de la règle 28 (blocIntDoWhile)
+    $défaut  réduction par utilisation de la règle 55 (alo)
 
 
 État 41
 
-   30 blocIntDoWhile: blocDoWhile •
+   52 blocSi: NGE cond alo • bloc finSi
+   53       | NGE cond alo • bloc sino bloc finSi
 
-    $défaut  réduction par utilisation de la règle 30 (blocIntDoWhile)
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    LAN       décalage et aller à l'état 4
+
+    bloc   aller à l'état 60
+    instr  aller à l'état 13
 
 
 État 42
 
-   25 blocDoWhile: BO $@2 blocIntDoWhile • NTIETE exp_bool ENDWHILE
+   43 blocWhile: NTIETE etiquetWhile exp_bool • LOOP blocIntWhile ENDWHILE
 
-    NTIETE  décalage et aller à l'état 56
+    BO  décalage et aller à l'état 61
+
+    LOOP  aller à l'état 62
 
 
 État 43
 
-   29 blocIntDoWhile: blocWhile •
+   50 exp_bool: cond •
 
-    $défaut  réduction par utilisation de la règle 29 (blocIntDoWhile)
+    $défaut  réduction par utilisation de la règle 50 (exp_bool)
 
 
 État 44
 
-   27 blocIntDoWhile: blocSi •
+   38 blocIntDoWhile: bloc •
 
-    $défaut  réduction par utilisation de la règle 27 (blocIntDoWhile)
+    $défaut  réduction par utilisation de la règle 38 (blocIntDoWhile)
 
 
 État 45
 
-   16 blocFor: ASU VARIABLE ANOAN • E YA E ITIE E BO $@1 blocIntFor AMANASU
+   40 blocIntDoWhile: blocFor •
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    E  aller à l'état 57
-    T  aller à l'état 32
-    F  aller à l'état 33
+    $défaut  réduction par utilisation de la règle 40 (blocIntDoWhile)
 
 
 État 46
 
-   10 bloc: instr SEMI bloc •
+   42 blocIntDoWhile: blocDoWhile •
 
-    $défaut  réduction par utilisation de la règle 10 (bloc)
+    $défaut  réduction par utilisation de la règle 42 (blocIntDoWhile)
 
 
 État 47
 
-   50 E: E AKOK_LO • T
+   37 blocDoWhile: BO $@2 blocIntDoWhile • NTIETE exp_bool ENDWHILE
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    T  aller à l'état 58
-    F  aller à l'état 33
+    NTIETE  décalage et aller à l'état 63
 
 
 État 48
 
-   52 T: T MUL • F
+   41 blocIntDoWhile: blocWhile •
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    F  aller à l'état 59
+    $défaut  réduction par utilisation de la règle 41 (blocIntDoWhile)
 
 
 État 49
 
-   45 cond: LPAREN F DZAM_DEUH • F RPAREN
+   39 blocIntDoWhile: blocSi •
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    F  aller à l'état 60
+    $défaut  réduction par utilisation de la règle 39 (blocIntDoWhile)
 
 
 État 50
 
-   46 cond: LPAREN F ASSEULEN • F RPAREN
+   28 blocFor: ASU VARIABLE ANOAN • E YA E ITIE E BO $@1 blocIntFor AMANASU
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
 
-    F  aller à l'état 61
+    E  aller à l'état 64
+    T  aller à l'état 31
+    F  aller à l'état 32
 
 
 État 51
 
-   47 cond: LPAREN F ABOITE • F RPAREN
+   16 blocSwitch: SWITCH exp debutSwitch • listeCase ENDSWITCH
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
+    CASE  décalage et aller à l'état 65
 
-    F  aller à l'état 62
+    $défaut  réduction par utilisation de la règle 20 (listeCase)
+
+    listeCase  aller à l'état 66
 
 
 État 52
 
-   48 cond: LPAREN F ABUI • F RPAREN
+   62 E: E AKOK_LO • T
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
 
-    F  aller à l'état 63
+    T  aller à l'état 67
+    F  aller à l'état 32
 
 
 État 53
 
-   40 blocSi: NGE cond alo bloc • finSi
-   41       | NGE cond alo bloc • sino bloc finSi
+   63 E: E AVAH • T
 
-    NDEYA    décalage et aller à l'état 64
-    AMANNGE  décalage et aller à l'état 65
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
 
-    finSi  aller à l'état 66
-    sino   aller à l'état 67
+    T  aller à l'état 68
+    F  aller à l'état 32
 
 
 État 54
 
-   37 LOOP: BO •
+   65 T: T A_POULI • F
 
-    $défaut  réduction par utilisation de la règle 37 (LOOP)
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    F  aller à l'état 69
 
 
 État 55
 
-   31 blocWhile: NTIETE etiquetWhile exp_bool LOOP • blocIntWhile ENDWHILE
+   11 bloc: instr SEMI bloc •
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    NGE       décalage et aller à l'état 3
-    LAN       décalage et aller à l'état 4
-
-    bloc          aller à l'état 68
-    instr         aller à l'état 12
-    blocIntWhile  aller à l'état 69
-    blocSi        aller à l'état 70
+    $défaut  réduction par utilisation de la règle 11 (bloc)
 
 
 État 56
 
-   25 blocDoWhile: BO $@2 blocIntDoWhile NTIETE • exp_bool ENDWHILE
+   57 cond: LPAREN F DZAM_DEUH • F RPAREN
 
-    LPAREN  décalage et aller à l'état 19
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
 
-    exp_bool  aller à l'état 71
-    cond      aller à l'état 38
+    F  aller à l'état 70
 
 
 État 57
 
-   16 blocFor: ASU VARIABLE ANOAN E • YA E ITIE E BO $@1 blocIntFor AMANASU
-   50 E: E • AKOK_LO T
+   58 cond: LPAREN F ASSEULEN • F RPAREN
 
-    YA       décalage et aller à l'état 72
-    AKOK_LO  décalage et aller à l'état 47
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    F  aller à l'état 71
 
 
 État 58
 
-   50 E: E AKOK_LO T •
-   52 T: T • MUL F
+   59 cond: LPAREN F ABOITE • F RPAREN
 
-    MUL  décalage et aller à l'état 48
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
 
-    $défaut  réduction par utilisation de la règle 50 (E)
+    F  aller à l'état 72
 
 
 État 59
 
-   52 T: T MUL F •
+   60 cond: LPAREN F ABUI • F RPAREN
 
-    $défaut  réduction par utilisation de la règle 52 (T)
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    F  aller à l'état 73
 
 
 État 60
 
-   45 cond: LPAREN F DZAM_DEUH F • RPAREN
+   52 blocSi: NGE cond alo bloc • finSi
+   53       | NGE cond alo bloc • sino bloc finSi
 
-    RPAREN  décalage et aller à l'état 73
+    NDEYA    décalage et aller à l'état 74
+    AMANNGE  décalage et aller à l'état 75
+
+    finSi  aller à l'état 76
+    sino   aller à l'état 77
 
 
 État 61
 
-   46 cond: LPAREN F ASSEULEN F • RPAREN
+   49 LOOP: BO •
 
-    RPAREN  décalage et aller à l'état 74
+    $défaut  réduction par utilisation de la règle 49 (LOOP)
 
 
 État 62
 
-   47 cond: LPAREN F ABOITE F • RPAREN
+   43 blocWhile: NTIETE etiquetWhile exp_bool LOOP • blocIntWhile ENDWHILE
 
-    RPAREN  décalage et aller à l'état 75
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+
+    bloc          aller à l'état 78
+    instr         aller à l'état 13
+    blocIntWhile  aller à l'état 79
+    blocSi        aller à l'état 80
 
 
 État 63
 
-   48 cond: LPAREN F ABUI F • RPAREN
+   37 blocDoWhile: BO $@2 blocIntDoWhile NTIETE • exp_bool ENDWHILE
 
-    RPAREN  décalage et aller à l'état 76
+    LPAREN  décalage et aller à l'état 21
+
+    exp_bool  aller à l'état 81
+    cond      aller à l'état 43
 
 
 État 64
 
-   44 sino: NDEYA •
+   28 blocFor: ASU VARIABLE ANOAN E • YA E ITIE E BO $@1 blocIntFor AMANASU
+   62 E: E • AKOK_LO T
+   63  | E • AVAH T
 
-    $défaut  réduction par utilisation de la règle 44 (sino)
+    YA       décalage et aller à l'état 82
+    AKOK_LO  décalage et aller à l'état 52
+    AVAH     décalage et aller à l'état 53
 
 
 État 65
 
-   42 finSi: AMANNGE •
+   18 listeCase: CASE • INTEGER DOUBLEMARK stat_list case_break listeCase
+   19          | CASE • INTEGER DOUBLEMARK stat_list case_break
 
-    $défaut  réduction par utilisation de la règle 42 (finSi)
+    INTEGER  décalage et aller à l'état 83
 
 
 État 66
 
-   40 blocSi: NGE cond alo bloc finSi •
+   16 blocSwitch: SWITCH exp debutSwitch listeCase • ENDSWITCH
 
-    $défaut  réduction par utilisation de la règle 40 (blocSi)
+    ENDSWITCH  décalage et aller à l'état 84
 
 
 État 67
 
-   41 blocSi: NGE cond alo bloc sino • bloc finSi
+   62 E: E AKOK_LO T •
+   65 T: T • A_POULI F
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    LAN       décalage et aller à l'état 4
+    A_POULI  décalage et aller à l'état 54
 
-    bloc   aller à l'état 77
-    instr  aller à l'état 12
+    $défaut  réduction par utilisation de la règle 62 (E)
 
 
 État 68
 
-   32 blocIntWhile: bloc •
-   35             | bloc • blocIntWhile
+   63 E: E AVAH T •
+   65 T: T • A_POULI F
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    NGE       décalage et aller à l'état 3
-    LAN       décalage et aller à l'état 4
+    A_POULI  décalage et aller à l'état 54
 
-    $défaut  réduction par utilisation de la règle 32 (blocIntWhile)
-
-    bloc          aller à l'état 68
-    instr         aller à l'état 12
-    blocIntWhile  aller à l'état 78
-    blocSi        aller à l'état 70
+    $défaut  réduction par utilisation de la règle 63 (E)
 
 
 État 69
 
-   31 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile • ENDWHILE
+   65 T: T A_POULI F •
 
-    AMAN  décalage et aller à l'état 79
-
-    ENDWHILE  aller à l'état 80
+    $défaut  réduction par utilisation de la règle 65 (T)
 
 
 État 70
 
-   33 blocIntWhile: blocSi •
-   34             | blocSi • blocIntWhile
+   57 cond: LPAREN F DZAM_DEUH F • RPAREN
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    NGE       décalage et aller à l'état 3
-    LAN       décalage et aller à l'état 4
-
-    $défaut  réduction par utilisation de la règle 33 (blocIntWhile)
-
-    bloc          aller à l'état 68
-    instr         aller à l'état 12
-    blocIntWhile  aller à l'état 81
-    blocSi        aller à l'état 70
+    RPAREN  décalage et aller à l'état 85
 
 
 État 71
 
-   25 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool • ENDWHILE
+   58 cond: LPAREN F ASSEULEN F • RPAREN
 
-    AMAN  décalage et aller à l'état 79
-
-    ENDWHILE  aller à l'état 82
+    RPAREN  décalage et aller à l'état 86
 
 
 État 72
 
-   16 blocFor: ASU VARIABLE ANOAN E YA • E ITIE E BO $@1 blocIntFor AMANASU
+   59 cond: LPAREN F ABOITE F • RPAREN
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    E  aller à l'état 83
-    T  aller à l'état 32
-    F  aller à l'état 33
+    RPAREN  décalage et aller à l'état 87
 
 
 État 73
 
-   45 cond: LPAREN F DZAM_DEUH F RPAREN •
+   60 cond: LPAREN F ABUI F • RPAREN
 
-    $défaut  réduction par utilisation de la règle 45 (cond)
+    RPAREN  décalage et aller à l'état 88
 
 
 État 74
 
-   46 cond: LPAREN F ASSEULEN F RPAREN •
+   56 sino: NDEYA •
 
-    $défaut  réduction par utilisation de la règle 46 (cond)
+    $défaut  réduction par utilisation de la règle 56 (sino)
 
 
 État 75
 
-   47 cond: LPAREN F ABOITE F RPAREN •
+   54 finSi: AMANNGE •
 
-    $défaut  réduction par utilisation de la règle 47 (cond)
+    $défaut  réduction par utilisation de la règle 54 (finSi)
 
 
 État 76
 
-   48 cond: LPAREN F ABUI F RPAREN •
+   52 blocSi: NGE cond alo bloc finSi •
 
-    $défaut  réduction par utilisation de la règle 48 (cond)
+    $défaut  réduction par utilisation de la règle 52 (blocSi)
 
 
 État 77
 
-   41 blocSi: NGE cond alo bloc sino bloc • finSi
+   53 blocSi: NGE cond alo bloc sino • bloc finSi
 
-    AMANNGE  décalage et aller à l'état 65
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    LAN       décalage et aller à l'état 4
 
-    finSi  aller à l'état 84
+    bloc   aller à l'état 89
+    instr  aller à l'état 13
 
 
 État 78
 
-   35 blocIntWhile: bloc blocIntWhile •
+   44 blocIntWhile: bloc •
+   47             | bloc • blocIntWhile
 
-    $défaut  réduction par utilisation de la règle 35 (blocIntWhile)
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+
+    $défaut  réduction par utilisation de la règle 44 (blocIntWhile)
+
+    bloc          aller à l'état 78
+    instr         aller à l'état 13
+    blocIntWhile  aller à l'état 90
+    blocSi        aller à l'état 80
 
 
 État 79
 
-   39 ENDWHILE: AMAN •
+   43 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile • ENDWHILE
 
-    $défaut  réduction par utilisation de la règle 39 (ENDWHILE)
+    AMAN  décalage et aller à l'état 91
+
+    ENDWHILE  aller à l'état 92
 
 
 État 80
 
-   31 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE •
+   45 blocIntWhile: blocSi •
+   46             | blocSi • blocIntWhile
 
-    $défaut  réduction par utilisation de la règle 31 (blocWhile)
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+
+    $défaut  réduction par utilisation de la règle 45 (blocIntWhile)
+
+    bloc          aller à l'état 78
+    instr         aller à l'état 13
+    blocIntWhile  aller à l'état 93
+    blocSi        aller à l'état 80
 
 
 État 81
 
-   34 blocIntWhile: blocSi blocIntWhile •
+   37 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool • ENDWHILE
 
-    $défaut  réduction par utilisation de la règle 34 (blocIntWhile)
+    AMAN  décalage et aller à l'état 91
+
+    ENDWHILE  aller à l'état 94
 
 
 État 82
 
-   25 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE •
+   28 blocFor: ASU VARIABLE ANOAN E YA • E ITIE E BO $@1 blocIntFor AMANASU
 
-    $défaut  réduction par utilisation de la règle 25 (blocDoWhile)
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    E  aller à l'état 95
+    T  aller à l'état 31
+    F  aller à l'état 32
 
 
 État 83
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E • ITIE E BO $@1 blocIntFor AMANASU
-   50 E: E • AKOK_LO T
+   18 listeCase: CASE INTEGER • DOUBLEMARK stat_list case_break listeCase
+   19          | CASE INTEGER • DOUBLEMARK stat_list case_break
 
-    ITIE     décalage et aller à l'état 85
-    AKOK_LO  décalage et aller à l'état 47
+    DOUBLEMARK  décalage et aller à l'état 96
 
 
 État 84
 
-   41 blocSi: NGE cond alo bloc sino bloc finSi •
+   16 blocSwitch: SWITCH exp debutSwitch listeCase ENDSWITCH •
 
-    $défaut  réduction par utilisation de la règle 41 (blocSi)
+    $défaut  réduction par utilisation de la règle 16 (blocSwitch)
 
 
 État 85
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE • E BO $@1 blocIntFor AMANASU
+   57 cond: LPAREN F DZAM_DEUH F RPAREN •
 
-    INTEGER   décalage et aller à l'état 28
-    VARIABLE  décalage et aller à l'état 29
-
-    E  aller à l'état 86
-    T  aller à l'état 32
-    F  aller à l'état 33
+    $défaut  réduction par utilisation de la règle 57 (cond)
 
 
 État 86
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E • BO $@1 blocIntFor AMANASU
-   50 E: E • AKOK_LO T
+   58 cond: LPAREN F ASSEULEN F RPAREN •
 
-    BO       décalage et aller à l'état 87
-    AKOK_LO  décalage et aller à l'état 47
+    $défaut  réduction par utilisation de la règle 58 (cond)
 
 
 État 87
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO • $@1 blocIntFor AMANASU
+   59 cond: LPAREN F ABOITE F RPAREN •
 
-    $défaut  réduction par utilisation de la règle 15 ($@1)
-
-    $@1  aller à l'état 88
+    $défaut  réduction par utilisation de la règle 59 (cond)
 
 
 État 88
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 • blocIntFor AMANASU
+   60 cond: LPAREN F ABUI F RPAREN •
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    NGE       décalage et aller à l'état 3
-    LAN       décalage et aller à l'état 4
-    NTIETE    décalage et aller à l'état 5
-    ASU       décalage et aller à l'état 7
-
-    bloc        aller à l'état 89
-    instr       aller à l'état 12
-    blocFor     aller à l'état 90
-    blocIntFor  aller à l'état 91
-    blocWhile   aller à l'état 92
-    blocSi      aller à l'état 93
+    $défaut  réduction par utilisation de la règle 60 (cond)
 
 
 État 89
 
-   17 blocIntFor: bloc •
-   23           | bloc • blocIntFor
+   53 blocSi: NGE cond alo bloc sino bloc • finSi
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    NGE       décalage et aller à l'état 3
-    LAN       décalage et aller à l'état 4
-    NTIETE    décalage et aller à l'état 5
-    ASU       décalage et aller à l'état 7
+    AMANNGE  décalage et aller à l'état 75
 
-    $défaut  réduction par utilisation de la règle 17 (blocIntFor)
-
-    bloc        aller à l'état 89
-    instr       aller à l'état 12
-    blocFor     aller à l'état 90
-    blocIntFor  aller à l'état 94
-    blocWhile   aller à l'état 92
-    blocSi      aller à l'état 93
+    finSi  aller à l'état 97
 
 
 État 90
 
-   20 blocIntFor: blocFor •
-   21           | blocFor • bloc
+   47 blocIntWhile: bloc blocIntWhile •
 
-    ABAH      décalage et aller à l'état 1
-    VARIABLE  décalage et aller à l'état 2
-    LAN       décalage et aller à l'état 4
-
-    $défaut  réduction par utilisation de la règle 20 (blocIntFor)
-
-    bloc   aller à l'état 95
-    instr  aller à l'état 12
+    $défaut  réduction par utilisation de la règle 47 (blocIntWhile)
 
 
 État 91
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor • AMANASU
+   51 ENDWHILE: AMAN •
 
-    AMANASU  décalage et aller à l'état 96
+    $défaut  réduction par utilisation de la règle 51 (ENDWHILE)
 
 
 État 92
 
-   19 blocIntFor: blocWhile •
+   43 blocWhile: NTIETE etiquetWhile exp_bool LOOP blocIntWhile ENDWHILE •
 
-    $défaut  réduction par utilisation de la règle 19 (blocIntFor)
+    $défaut  réduction par utilisation de la règle 43 (blocWhile)
 
 
 État 93
 
-   18 blocIntFor: blocSi •
-   22           | blocSi • blocIntFor
+   46 blocIntWhile: blocSi blocIntWhile •
+
+    $défaut  réduction par utilisation de la règle 46 (blocIntWhile)
+
+
+État 94
+
+   37 blocDoWhile: BO $@2 blocIntDoWhile NTIETE exp_bool ENDWHILE •
+
+    $défaut  réduction par utilisation de la règle 37 (blocDoWhile)
+
+
+État 95
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E • ITIE E BO $@1 blocIntFor AMANASU
+   62 E: E • AKOK_LO T
+   63  | E • AVAH T
+
+    ITIE     décalage et aller à l'état 98
+    AKOK_LO  décalage et aller à l'état 52
+    AVAH     décalage et aller à l'état 53
+
+
+État 96
+
+   18 listeCase: CASE INTEGER DOUBLEMARK • stat_list case_break listeCase
+   19          | CASE INTEGER DOUBLEMARK • stat_list case_break
+
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+    NTIETE    décalage et aller à l'état 5
+    BO        décalage et aller à l'état 6
+    ASU       décalage et aller à l'état 7
+    SWITCH    décalage et aller à l'état 8
+
+    stat         aller à l'état 99
+    bloc         aller à l'état 12
+    instr        aller à l'état 13
+    blocSwitch   aller à l'état 14
+    stat_list    aller à l'état 100
+    blocFor      aller à l'état 15
+    blocDoWhile  aller à l'état 16
+    blocWhile    aller à l'état 17
+    blocSi       aller à l'état 18
+
+
+État 97
+
+   53 blocSi: NGE cond alo bloc sino bloc finSi •
+
+    $défaut  réduction par utilisation de la règle 53 (blocSi)
+
+
+État 98
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE • E BO $@1 blocIntFor AMANASU
+
+    INTEGER   décalage et aller à l'état 27
+    VARIABLE  décalage et aller à l'état 36
+
+    E  aller à l'état 101
+    T  aller à l'état 31
+    F  aller à l'état 32
+
+
+État 99
+
+   23 stat_list: stat •
+   24          | stat • stat_list
+
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+    NTIETE    décalage et aller à l'état 5
+    BO        décalage et aller à l'état 6
+    ASU       décalage et aller à l'état 7
+    SWITCH    décalage et aller à l'état 8
+
+    $défaut  réduction par utilisation de la règle 23 (stat_list)
+
+    stat         aller à l'état 99
+    bloc         aller à l'état 12
+    instr        aller à l'état 13
+    blocSwitch   aller à l'état 14
+    stat_list    aller à l'état 102
+    blocFor      aller à l'état 15
+    blocDoWhile  aller à l'état 16
+    blocWhile    aller à l'état 17
+    blocSi       aller à l'état 18
+
+
+État 100
+
+   18 listeCase: CASE INTEGER DOUBLEMARK stat_list • case_break listeCase
+   19          | CASE INTEGER DOUBLEMARK stat_list • case_break
+
+    BREAK  décalage et aller à l'état 103
+
+    $défaut  réduction par utilisation de la règle 22 (case_break)
+
+    case_break  aller à l'état 104
+
+
+État 101
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E • BO $@1 blocIntFor AMANASU
+   62 E: E • AKOK_LO T
+   63  | E • AVAH T
+
+    BO       décalage et aller à l'état 105
+    AKOK_LO  décalage et aller à l'état 52
+    AVAH     décalage et aller à l'état 53
+
+
+État 102
+
+   24 stat_list: stat stat_list •
+
+    $défaut  réduction par utilisation de la règle 24 (stat_list)
+
+
+État 103
+
+   21 case_break: BREAK •
+
+    $défaut  réduction par utilisation de la règle 21 (case_break)
+
+
+État 104
+
+   18 listeCase: CASE INTEGER DOUBLEMARK stat_list case_break • listeCase
+   19          | CASE INTEGER DOUBLEMARK stat_list case_break •
+
+    CASE  décalage et aller à l'état 65
+
+    ENDSWITCH  réduction par utilisation de la règle 19 (listeCase)
+    ENDSWITCH  [réduction par utilisation de la règle 20 (listeCase)]
+    $défaut    réduction par utilisation de la règle 19 (listeCase)
+
+    listeCase  aller à l'état 106
+
+
+État 105
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO • $@1 blocIntFor AMANASU
+
+    $défaut  réduction par utilisation de la règle 27 ($@1)
+
+    $@1  aller à l'état 107
+
+
+État 106
+
+   18 listeCase: CASE INTEGER DOUBLEMARK stat_list case_break listeCase •
+
+    $défaut  réduction par utilisation de la règle 18 (listeCase)
+
+
+État 107
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 • blocIntFor AMANASU
 
     ABAH      décalage et aller à l'état 1
     VARIABLE  décalage et aller à l'état 2
@@ -1097,39 +1303,110 @@ Non-terminaux, suivis des règles où ils apparaissent
     NTIETE    décalage et aller à l'état 5
     ASU       décalage et aller à l'état 7
 
-    $défaut  réduction par utilisation de la règle 18 (blocIntFor)
-
-    bloc        aller à l'état 89
-    instr       aller à l'état 12
-    blocFor     aller à l'état 90
-    blocIntFor  aller à l'état 97
-    blocWhile   aller à l'état 92
-    blocSi      aller à l'état 93
+    bloc        aller à l'état 108
+    instr       aller à l'état 13
+    blocFor     aller à l'état 109
+    blocIntFor  aller à l'état 110
+    blocWhile   aller à l'état 111
+    blocSi      aller à l'état 112
 
 
-État 94
+État 108
 
-   23 blocIntFor: bloc blocIntFor •
+   29 blocIntFor: bloc •
+   35           | bloc • blocIntFor
 
-    $défaut  réduction par utilisation de la règle 23 (blocIntFor)
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+    NTIETE    décalage et aller à l'état 5
+    ASU       décalage et aller à l'état 7
+
+    $défaut  réduction par utilisation de la règle 29 (blocIntFor)
+
+    bloc        aller à l'état 108
+    instr       aller à l'état 13
+    blocFor     aller à l'état 109
+    blocIntFor  aller à l'état 113
+    blocWhile   aller à l'état 111
+    blocSi      aller à l'état 112
 
 
-État 95
+État 109
 
-   21 blocIntFor: blocFor bloc •
+   32 blocIntFor: blocFor •
+   33           | blocFor • bloc
 
-    $défaut  réduction par utilisation de la règle 21 (blocIntFor)
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    LAN       décalage et aller à l'état 4
+
+    $défaut  réduction par utilisation de la règle 32 (blocIntFor)
+
+    bloc   aller à l'état 114
+    instr  aller à l'état 13
 
 
-État 96
+État 110
 
-   16 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU •
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor • AMANASU
 
-    $défaut  réduction par utilisation de la règle 16 (blocFor)
+    AMANASU  décalage et aller à l'état 115
 
 
-État 97
+État 111
 
-   22 blocIntFor: blocSi blocIntFor •
+   31 blocIntFor: blocWhile •
 
-    $défaut  réduction par utilisation de la règle 22 (blocIntFor)
+    $défaut  réduction par utilisation de la règle 31 (blocIntFor)
+
+
+État 112
+
+   30 blocIntFor: blocSi •
+   34           | blocSi • blocIntFor
+
+    ABAH      décalage et aller à l'état 1
+    VARIABLE  décalage et aller à l'état 2
+    NGE       décalage et aller à l'état 3
+    LAN       décalage et aller à l'état 4
+    NTIETE    décalage et aller à l'état 5
+    ASU       décalage et aller à l'état 7
+
+    $défaut  réduction par utilisation de la règle 30 (blocIntFor)
+
+    bloc        aller à l'état 108
+    instr       aller à l'état 13
+    blocFor     aller à l'état 109
+    blocIntFor  aller à l'état 116
+    blocWhile   aller à l'état 111
+    blocSi      aller à l'état 112
+
+
+État 113
+
+   35 blocIntFor: bloc blocIntFor •
+
+    $défaut  réduction par utilisation de la règle 35 (blocIntFor)
+
+
+État 114
+
+   33 blocIntFor: blocFor bloc •
+
+    $défaut  réduction par utilisation de la règle 33 (blocIntFor)
+
+
+État 115
+
+   28 blocFor: ASU VARIABLE ANOAN E YA E ITIE E BO $@1 blocIntFor AMANASU •
+
+    $défaut  réduction par utilisation de la règle 28 (blocFor)
+
+
+État 116
+
+   34 blocIntFor: blocSi blocIntFor •
+
+    $défaut  réduction par utilisation de la règle 34 (blocIntFor)

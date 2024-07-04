@@ -1,0 +1,7 @@
+a=0;
+c=6;
+do
+    a=a+1;
+    print a;
+while(a < c)
+done

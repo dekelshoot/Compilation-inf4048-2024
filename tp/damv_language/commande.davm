@@ -1,12 +1,17 @@
 a anoan 0;
-d anoan 10;
-asu b anoan 0 ya 5 itie 1
+b anoan 0;
+
+lan a;
+lan b;
+
+ntie_te (a asseulen b)
 bo
-  asu c anoan 0 ya 2 itie 1
-  bo
-    abah d;
-  aman_asu
-  
-  a anoan a akok_lo 1;
-  abah a;
-aman_asu
+  nge(a abui b) ndo
+      a anoan b a_vah a;
+  nde_ya
+      b anoan a a_vah b;
+  aman_nge
+aman
+
+abah a;
+abah b;
