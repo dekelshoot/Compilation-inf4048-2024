@@ -49,4 +49,4 @@ Les contributions sont les bienvenues ! Si vous avez des suggestions ou des amé
 Ce projet est sous licence MIT.
 
 
-Vous pouvez copier ce code dans un fichier `README.md` dans votre dépôt GitHub.
+Vous pouvez copier modifier ou partager ce code
