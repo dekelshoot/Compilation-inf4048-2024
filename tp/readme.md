@@ -30,30 +30,23 @@ pour que tout fonctionne bien dans ce projet , vous devez avoir les outils suiva
 
 - `lexer.l` : Fichier Flex pour l'analyse lexicale.
 - `parser.y` : Fichier Bison pour l'analyse syntaxique.
-- `main.c` : Fichier C principal pour l'intégration de Flex et Bison.
-- `Makefile` : Fichier pour automatiser la compilation et l'exécution du projet.
-
-## Installation
-
-Pour cloner et exécuter ce projet, suivez les étapes ci-dessous :
-
-1. Clonez le dépôt :
-    ```sh
-    git clone https://github.com/dekelshoot/Compilation-inf4048-2024.git
-    cd Compilation-inf4048-2024
-    ```
-
-2. Compilez le projet :
-    ```sh
-    make
-    ```
-
-3. Exécutez le compilateur :
-    ```sh
-    ./compiler input_file.txt
-    ```
 
 ## Utilisation
 
+pour utiliser le langage créé, vous devez écrire le code source dans le ficier `commande.davm` ensuite exécuter le fichier `compilateur.sh` 
 Le compilateur prend en entrée un fichier texte contenant le code source du langage. Voici un exemple de code source supporté par le compilateur :
 
+
+
+Voici le code Markdown pour la description du fichier README.md :
+
+## Contribuer
+
+Les contributions sont les bienvenues ! Si vous avez des suggestions ou des améliorations, n'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+
+## Licence
+
+Ce projet est sous licence MIT.
+
+
+Vous pouvez copier ce code dans un fichier `README.md` dans votre dépôt GitHub.
