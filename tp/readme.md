@@ -20,6 +20,12 @@ pour que tout fonctionne bien dans ce projet , vous devez avoir les outils suiva
 - flex
 - bison
 
+## architecture
+- L'énoncé de chaque exercice se trouve dans le fichier pdf [**seminaireTraduction-Compilation.pdf**](./seminaireTraduction-Compilation.pdf)
+- les corrections de chaque exercices sont dans les dossiers correspondants à chaque tp
+- le dossier [**damv_language_anglaise**](./damv_language/) est la version anglase du langage
+- le dossier [**damv_language**](./damv_language/) est la version EWONDO du langage
+
 ### Fichiers Principaux
 
 - `lexer.l` : Fichier Flex pour l'analyse lexicale.
